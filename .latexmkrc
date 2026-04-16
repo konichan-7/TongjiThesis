@@ -34,6 +34,11 @@ $clean_full_ext = '';
 ###################
 $max_repeat = 5;
 
+# Match the README recommendation for minted: latexmk should invoke
+# the engine with shell escape enabled so external highlighters can run.
+$xelatex = 'xelatex -shell-escape %O %S';
+$lualatex = 'lualatex -shell-escape %O %S';
+
 # Ensure required directories exist
 use File::Path qw(make_path);
 make_path('chapters', 'figures', 'style', 'bib');
