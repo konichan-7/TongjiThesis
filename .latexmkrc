@@ -37,3 +37,7 @@ $max_repeat = 5;
 # Ensure required directories exist
 use File::Path qw(make_path);
 make_path('chapters', 'figures', 'style', 'bib');
+# Set font paths for macOS (required for Adobe fonts)
+if ( $^O eq 'darwin' ) {
+    $ENV{'OSFONTDIR'} = "$ENV{HOME}/Library/Fonts:/Library/Fonts:/System/Library/Fonts";
+}
