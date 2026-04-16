@@ -17,7 +17,7 @@ _out
 *.toc
 *.xdv
 *.synctex.gz
-
+*.bbl-SAVE-ERROR
 # minted
 _minted*
 *.pyg

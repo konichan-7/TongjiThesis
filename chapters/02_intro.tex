@@ -1,20 +1,5 @@
 \chapter{机械结构设计}\label{chap:mechanism}
 
-\newcommand{\mechanismfigure}[3][0.72\textwidth]{%
-  \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=#1]{#2}
-    \caption{#3}
-  \end{figure}
-}
-
-\newcommand{\inlineimage}[2][0.6\textwidth]{%
-  \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=#1]{#2}
-  \end{figure}
-}
-
 \section{总体设计目标与要求}
 
 本课题旨在研究混合式双轮足机器人的轻量级控制策略。为实现这一目标，机械结构设计必须满足以下核心要求：
@@ -61,7 +46,11 @@
 
 为了最大程度上减轻腿部的转动惯量，选择将腿部的两个驱动电机与髋关节一起放置在躯干上，两个电机通过链传动将力矩传递至连杆中。在机器人进行快速摆腿、腾空跳跃或触地缓冲时，沉重的电机定子和转子不参与腿部的大幅度摆动，从而极大地减小了运动惯性，使得腿部动作更加轻盈、敏捷，同时也有效保护了电机免受足端冲击的影响。
 
-\mechanismfigure{figures/ch02/image1.png}{腿部连杆机构简图}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.72\textwidth]{figures/ch02/image1.png}
+  \caption{腿部连杆机构简图}
+\end{figure}
 
 根据整机尺寸限制与越障指标要求，腿部连杆尺寸的设计直接决定了机器人的运动范围。本设计中的六杆机构关键参数如下：
 
@@ -92,7 +81,11 @@
 
 在 Python 中对该连杆参数的工作空间进行仿真：
 
-\mechanismfigure{figures/ch02/image2.png}{腿部连杆工作空间示意图}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.72\textwidth]{figures/ch02/image2.png}
+  \caption{腿部连杆工作空间示意图}
+\end{figure}
 
 由上图可知，该连杆参数下，腿部工作空间充裕，能够完成既定任务与指标。总结连杆参数至\tabref{tab:link-lengths}。
 
@@ -116,7 +109,10 @@
 
 下文分别从 6 个杆件开始，进行逐个设计。
 
-\inlineimage{figures/ch02/image3.png}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/ch02/image3.png}
+\end{figure}
 
 \subsubsection*{B. 躯干设计}
 
@@ -124,7 +120,10 @@
 
 拟采用框架式结构的设计原则，最大化内部空间利用率，并合理布置重心。为了提高机器人的平衡性能，将电池等重物尽量靠近机器人的几何中心和地面，实现低重心设计。同时为了最大程度地简化结构复杂度，减轻整机重量，将腿部传动使用的髋关节也作为机器人躯干的一部分，两个髋关节之间使用镂空的板材进行连接，同时在躯干上方螺栓连接一个 3D 打印件作为电池架，最终形成一个部分封闭的箱式结构。
 
-\inlineimage{figures/ch02/image4.png}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/ch02/image4.png}
+\end{figure}
 
 优先采用碳纤维板材或高强度铝合金（如 7075/6061）进行加工，在保证结构刚度的前提下达到极致轻量化。
 
@@ -135,7 +134,10 @@
 
 具体而言，髋关节轴系由内、外两层轴系组成。内轴系主要负责膝关节的屈伸运动，外轴系则控制髋关节的屈伸与旋转。两组轴承分别布置于轴系的关键支撑位置，有效分散运动过程中的径向与轴向载荷，降低摩擦损耗，提升传动效率与使用寿命。
 
-\inlineimage[0.48\textwidth]{figures/ch02/image5.jpeg}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.48\textwidth]{figures/ch02/image5.jpeg}
+\end{figure}
 
 \paragraph{b. 链传动设计}
 为了满足“驱动电机后置”及“轻量化”设计需求，本设计选用成熟度高、强度重量比优异的自行车链传动系统作为腿部力矩传递方案。
@@ -168,7 +170,10 @@
 
 校核结论表明，该链传动系统具有极高的安全冗余。即使在考虑冲击载荷系数 $K_A \approx 1.5$ 的情况下，链条仍工作在极其安全的范围内，几乎不存在断裂风险。
 
-\inlineimage{figures/ch02/image6.png}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/ch02/image6.png}
+\end{figure}
 
 链传动在长时间高频往复运动后，链条销轴与套筒之间会产生微量磨损，导致链条总长增加。若链条过松，会导致传动回差增大，影响机器人的倒立摆平衡控制精度，甚至在剧烈跳跃时发生脱链风险。
 
@@ -243,11 +248,17 @@
 
 关节驱动电机：选用额定扭矩为 $3.5\,\mathrm{N\cdot m}$、峰值扭矩为 $12.5\,\mathrm{N\cdot m}$ 的高性能无刷减速电机。$3.5\,\mathrm{N\cdot m}$ 的额定扭矩能够为髋关节和膝关节提供充足的持续驱动力，电机内置的行星减速机构可将峰值输出扭矩提升至更高水平，同时该电机具有 MIT 模式、速度模式、位置模式三种控制模式，能够满足机器人在跳跃落地瞬间的高冲击负载需求以及站立平衡时的力矩控制精度。
 
-\inlineimage[0.4\textwidth]{figures/ch02/image7.png}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{figures/ch02/image7.png}
+\end{figure}
 
 轮毂电机：选用额定扭矩为 $2.5\,\mathrm{N\cdot m}$ 的减速轮毂电机。该轮毂电机直接集成于足底，省去了复杂的传动链，极大地降低了足部惯量。$2.5\,\mathrm{N\cdot m}$ 的额定扭矩对于 $5\,\mathrm{kg}$ 级的机器人而言，能够提供充沛的地面驱动力，确保在轮式模式下具备优秀的加速性能和爬坡能力。
 
-\inlineimage[0.4\textwidth]{figures/ch02/image8.png}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{figures/ch02/image8.png}
+\end{figure}
 
 \section{移动系统设计}
 
@@ -257,7 +268,10 @@
 
 本机器人的驱动轮并非独立于腿部，而是集成在足部关节处。驱动轮固定于腿部最末端的踝关节之下，作为机器人在轮式模式下的主要支撑点和执行器。
 
-\inlineimage[0.38\textwidth]{figures/ch02/image9.png}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.38\textwidth]{figures/ch02/image9.png}
+\end{figure}
 
 这种设计最大限度地减少了额外的驱动机构和结构件，是实现轻量化的关键。
 
