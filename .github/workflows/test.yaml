@@ -1,0 +1,308 @@
+on:
+  push:
+    branches:
+      - master
+      - proposal
+      - dev
+      - 'feat/**'
+      - 'fix/**'
+      - 'refactor/**'
+    paths-ignore:
+      - '*.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - 'docs/**'
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - 'docs/**'
+  workflow_dispatch:
+
+name: test
+
+permissions:
+  contents: read
+
+# On push use the branch ref; on PR use the PR number.
+# This avoids duplicate runs: a push to a PR branch cancels the push-triggered run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Packages needed for the thesis compilation
+  TL_PACKAGES: |
+    adjustbox
+    algorithmicx
+    algorithms
+    biber
+    biblatex
+    biblatex-gb7714-2015
+    bibtex
+    booktabs
+    caption
+    carlisle
+    cases
+    catchfile
+    chinese-jfm
+    chngcntr
+    circledsteps
+    cleveref
+    collectbox
+    ctex
+    dvips
+    emptypage
+    enumitem
+    environ
+    extarrows
+    eso-pic
+    fancyhdr
+    fancyvrb
+    float
+    framed
+    fvextra
+    gbt7714
+    gsftopk
+    helvetic
+    hologo
+    ifplatform
+    lastpage
+    latexmk
+    lineno
+    listings
+    minted
+    multirow
+    mwe
+    natbib
+    needspace
+    newtx
+    nth
+    oberdiek
+    pdftexcmds
+    pgf
+    pict2e
+    picture
+    realscripts
+    rsfs
+    setspace
+    siunitx
+    tcolorbox
+    texcount
+    texliveonfly
+    threeparttable
+    threeparttablex
+    times
+    titling
+    tocloft
+    trimspaces
+    txfonts
+    ucs
+    upquote
+    was
+    xcolor
+    xecjk
+    xpatch
+    xstring
+    zhnumber
+
+jobs:
+  # Cross-platform build: default options (minted=true, biblatex=true)
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        compiler: [-xelatex, -lualatex]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Python for minted
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install Pygments for minted
+        run: pip install Pygments
+
+      - name: Install TeX Live
+        id: setup-tl
+        uses: tex-live/setup-texlive-action@v4
+        with:
+          version: 2026
+          packages: ${{ env.TL_PACKAGES }}
+        env:
+          SETUP_TEXLIVE_ACTION_NO_CACHE_ON_FAILURE: 1
+
+      - name: Compile LaTeX document (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          make ENGINE=${{ matrix.compiler }} all
+
+      - name: Compile LaTeX document (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          .\make.bat thesis ${{ matrix.compiler }}
+
+      - name: Show log on failure (Unix)
+        if: failure() && runner.os != 'Windows'
+        run: cat main.log
+
+      - name: Show log on failure (Windows)
+        if: failure() && runner.os == 'Windows'
+        run: Get-Content main.log
+
+      - name: Rename PDF
+        if: success()
+        shell: bash
+        run: |
+          OS=$(echo "${{ runner.os }}" | tr '[:upper:]' '[:lower:]')
+          COMPILER=$(echo "${{ matrix.compiler }}" | sed 's/^-//')
+          mv main.pdf "tongjithesis-${OS}-${COMPILER}.pdf"
+
+      - name: Upload PDF
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: document-${{ runner.os }}-${{ matrix.compiler }}
+          path: tongjithesis-*.pdf
+          retention-days: 30
+
+  # Option variants: test minted=false and bibtex (Linux-only, xelatex-only)
+  build-variants:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: minted-false
+            pygments: false
+          - variant: bibtex
+            pygments: true
+          - variant: minimal
+            pygments: false
+          - variant: twoside
+            pygments: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Python for minted
+        if: matrix.pygments
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install Pygments for minted
+        if: matrix.pygments
+        run: pip install Pygments
+
+      - name: Install TeX Live
+        id: setup-tl
+        uses: tex-live/setup-texlive-action@v4
+        with:
+          version: 2026
+          packages: ${{ env.TL_PACKAGES }}
+        env:
+          SETUP_TEXLIVE_ACTION_NO_CACHE_ON_FAILURE: 1
+
+      - name: Configure minted=false variant
+        if: matrix.variant == 'minted-false'
+        run: |
+          sed -i 's/minted=true/minted=false/' main.tex
+
+      - name: Configure bibtex variant
+        if: matrix.variant == 'bibtex'
+        run: |
+          sed -i 's/biblatex=true/biblatex=false/' main.tex
+
+      - name: Configure minimal variant (no minted, no biblatex)
+        if: matrix.variant == 'minimal'
+        run: |
+          sed -i 's/minted=true/minted=false/' main.tex
+          sed -i 's/biblatex=true/biblatex=false/' main.tex
+
+      - name: Configure twoside variant
+        if: matrix.variant == 'twoside'
+        run: |
+          sed -i 's/oneside/twoside/' main.tex
+
+      - name: Verify variant configuration
+        run: |
+          git diff main.tex
+          if [ "${{ matrix.variant }}" = "minted-false" ] || [ "${{ matrix.variant }}" = "minimal" ]; then
+            grep -q 'minted=false' main.tex || { echo "ERROR: minted=false not set"; exit 1; }
+          fi
+          if [ "${{ matrix.variant }}" = "bibtex" ] || [ "${{ matrix.variant }}" = "minimal" ]; then
+            grep -q 'biblatex=false' main.tex || { echo "ERROR: biblatex=false not set"; exit 1; }
+          fi
+          if [ "${{ matrix.variant }}" = "twoside" ]; then
+            grep -q 'twoside' main.tex || { echo "ERROR: twoside not set"; exit 1; }
+          fi
+
+      - name: Compile LaTeX document
+        run: |
+          make ENGINE=-xelatex all
+
+      - name: Show log on failure
+        if: failure()
+        run: cat main.log
+
+      - name: Rename PDF
+        if: success()
+        run: mv main.pdf tongjithesis-linux-xelatex-${{ matrix.variant }}.pdf
+
+      - name: Upload PDF
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: document-variant-${{ matrix.variant }}
+          path: tongjithesis-linux-xelatex-${{ matrix.variant }}.pdf
+          retention-days: 30
+
+  # Summary job to check all builds completed successfully
+  test-summary:
+    runs-on: ubuntu-latest
+    needs: [build, build-variants]
+    if: always()
+    steps:
+      - name: Check all builds succeeded
+        run: |
+          echo "Cross-platform build status: ${{ needs.build.result }}"
+          echo "Variant build status: ${{ needs.build-variants.result }}"
+
+          if [[ "${{ needs.build.result }}" != "success" ||
+                "${{ needs.build-variants.result }}" != "success" ]]; then
+            echo "One or more builds failed"
+            exit 1
+          fi
+          echo "All builds completed successfully"
+
+  # Collect all compiled PDFs into a single artifact
+  collect-pdfs:
+    runs-on: ubuntu-latest
+    needs: [build, build-variants]
+    if: always() && !cancelled()
+    steps:
+      - name: Download all PDF artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: document-*
+          merge-multiple: true
+
+      - name: List downloaded files
+        run: |
+          echo "Downloaded PDF files:"
+          ls -la *.pdf
+
+      - name: Upload consolidated PDFs
+        uses: actions/upload-artifact@v7
+        with:
+          name: all-compiled-documents
+          path: "*.pdf"
+          retention-days: 90
