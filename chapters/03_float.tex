@@ -1,510 +1,481 @@
-\chapter{图表与代码}\label{chap:float}
+\chapter{机器人运动学与动力学建模}\label{chap:model}
 
-本章介绍插图、表格、算法和代码等浮动体的使用方法。浮动体可以自由浮动在页面中，\LaTeX{} 会自动选择合适的位置进行排版。如需固定位置，可使用 \pkg{float} 宏包的 \texttt{[H]} 参数。
+为建立后续平衡控制、跳跃控制与腿部虚拟模型控制（Virtual Model Control, VMC）的理论基础，本章首先对第二章所设计的腿部闭环机构进行等效简化，将其抽象为位于机器人矢状面的可伸缩虚拟杆；随后建立机器人平面模型的坐标系并统一符号定义，在此基础上推导系统的运动学方程与动力学方程；最后给出五连杆机构在 VMC 框架下的运动学映射和动力学表达，为后续控制器设计与实现提供模型支撑。
 
-浮动体位置选项说明：\texttt{h}（here，当前位置）、\texttt{t}（top，页面顶部）、\texttt{b}（bottom，页面底部）、\texttt{p}（page，独立浮动页）、\texttt{!}（放宽内部限制）、\texttt{H}（强制固定位置，需 \pkg{float} 宏包）。
+\section{腿部机构虚拟杆等效与 VMC 建模思路}
 
-\section{插图}
+机器人单腿采用闭环连杆传动形式。该类机构虽然具有较高的结构刚度与传动效率，但其闭环约束使得直接在关节空间进行控制设计时存在变量耦合强、物理意义不直观等问题。为降低建模与控制复杂度，本文依据虚功等效原理，将单腿机构等效为一根连接髋关节与轮轴中心的虚拟杆。虚拟杆的长度表征腿部伸缩状态，虚拟杆相对于竖直方向的转角表征腿部摆动状态。通过该等效处理，原闭环腿部机构可由“多关节耦合驱动问题”转化为“虚拟杆轴向力与摆动转矩控制问题”。
 
-在 \TeX{} 中，插图功能是通过特定编译程序提供的机制实现的。不同的编译程序支持不同的图形格式。通常，图形都放置在浮动环境中。浮动的意思是，最终排版的图形位置不一定与源文件中的位置对应，这也是新手在使用 \LaTeX{} 时可能会遇到的问题。如果需要强制固定浮动图形的位置，请使用 \pkg{float} 宏包，并使用 \texttt{[H]} 参数。
+在 VMC 框架下，不直接对驱动关节给定位置或力矩指令，而是首先在任务空间构造与机器人期望行为相对应的虚拟力学元件，例如虚拟弹簧、虚拟阻尼器和虚拟扭簧等，再将得到的虚拟作用力映射为关节驱动力矩\cite{pratt2001}。对于本文所建立的腿部虚拟杆模型，定义虚拟控制量为
+\begin{equation}
+  \boldsymbol{F}_v =
+  \begin{bmatrix}
+    F_l \\
+    T_\theta
+  \end{bmatrix},
+  \label{eq:virtual-force-def}
+\end{equation}
+其中，$F_l$ 为沿虚拟杆方向的轴向虚拟力，用于调节支撑力与腿长；$T_\theta$ 为绕髋关节的虚拟转矩，用于调节腿部摆动姿态。若进一步采用线性弹簧阻尼形式构造虚拟元件，则有
+\begin{equation}
+  \left\{
+    \begin{aligned}
+      F_l     &= K_l (l_d - l) + D_l (\dot{l}_d - \dot{l}), \\
+      T_\theta &= K_\theta (\theta_{ld} - \theta_l) + D_\theta (\dot{\theta}_{ld} - \dot{\theta}_l),
+    \end{aligned}
+  \right.
+  \label{eq:vmc-law}
+\end{equation}
+式中，$l_d$ 与 $\theta_{ld}$ 分别为虚拟腿长和平均虚拟腿摆角的期望值；$K_l$、$D_l$、$K_\theta$ 与 $D_\theta$ 分别为对应方向的虚拟刚度系数与虚拟阻尼系数。由此，腿部控制目标由复杂的闭环关节协调控制转化为对虚拟腿长和平均虚拟腿摆角的直接调节，为后续基于任务空间的控制律设计提供了更清晰的物理描述。
 
-\subsection{单个图形}
+\section{坐标系建立与符号约定}
 
-要插入单个图形，可以使用 \verb|\includegraphics| 命令，并在其参数中指定图像文件名和一些选项。例如：
+为保持全文符号体系统一，本文先给出原始广义坐标，再给出用于 VMC 推导的平面等效变量。原始广义坐标取为
+\begin{equation}
+  \boldsymbol{q} =
+  \begin{bmatrix}
+    \theta_{wl} & \theta_{wr} & \theta_{ll} & \theta_{lr} & \theta_b
+  \end{bmatrix}^{\mathsf{T}},
+  \label{eq:generalized-coordinate-origin}
+\end{equation}
+其中，$\theta_{wl}$ 和 $\theta_{wr}$ 分别表示左、右轮转角，$\theta_{ll}$ 和 $\theta_{lr}$ 分别表示左、右虚拟腿摆角，$\theta_b$ 表示机体俯仰角。与上述广义坐标对应的控制输入记为
+\begin{equation}
+  \boldsymbol{u} =
+  \begin{bmatrix}
+    T_{lw,l} & T_{lw,r} & T_{bl,l} & T_{bl,r}
+  \end{bmatrix}^{\mathsf{T}},
+  \label{eq:input-origin}
+\end{equation}
+其中，$T_{lw,l}$、$T_{lw,r}$ 为左右轮电机输出转矩，$T_{bl,l}$、$T_{bl,r}$ 为左右腿关节驱动转矩。
 
-\begin{figure}[!htb]
+为突出机器人在前进、平衡和起跳过程中的主要动力学特性，本文进一步仅考虑矢状面内的对称运动，建立平面等效模型，并作如下假设：
+\begin{enumerate}
+  \item 机器人各构件均视为刚体，连杆柔性变形、轴承间隙和摩擦损失忽略不计；
+  \item 左右腿在直线运动与俯仰平衡任务中满足近似对称条件，可用左右腿平均虚拟腿进行描述，即 $\theta_l = (\theta_{ll} + \theta_{lr})/2$；
+  \item 轮地接触满足纯滚动约束，不考虑轮胎侧偏和滑移效应；
+  \item 机体绕侧倾轴与偏航轴的运动在本节建模中暂不考虑，仅保留平动、俯仰和腿部伸缩自由度。
+\end{enumerate}
+
+根据上述假设建立机器人平面等效模型及坐标系，如\figref{fig:model-coordinate} 所示。取地面惯性坐标系 $\Sigma_I = \{O_I, s, h\}$，其中 $s$ 轴沿机器人前进方向，$h$ 轴竖直向上。以轮轴中心记为点 $W$，髋关节记为点 $H$，机体质心记为点 $B$。定义等效虚拟腿长度为 $l$，平均虚拟腿摆角为 $\theta_l$，机体俯仰角为 $\theta_b$，轮半径为 $R_w$，轮轴中心在惯性坐标系中的水平位移记为 $s$。此外，系统偏航角记为 $\phi$，在本节平面建模中仅保留其记号，不展开其三维动力学推导。
+
+\begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/tongjithesis.pdf}
-  \caption{\TongjiThesis{} 项目标志}
-  \label{fig:example}
+  \includegraphics[width=0.88\textwidth]{figures/ch03/wbr_coordinate.png}
+  \caption{机器人平面等效模型及坐标系定义}
+  \label{fig:model-coordinate}
 \end{figure}
 
-这段代码会在浮动体中插入一个名为 \verb|figures/tongjithesis.pdf| 的图形，并将其居中显示。图形下方会有一个标题，同时为该图形标上标签，以便于交叉引用。
+为便于后续推导，将本文涉及的主要符号统一列于\tabref{tab:model-symbols}。
 
-如需在正文中引用该图，可使用 \verb|\cref{fig:example}| 命令，效果为“\cref{fig:example}”；也可使用 \verb|\figref{fig:example}| 命令，效果为“\figref{fig:example}”。
-
-需要注意的是，在使用 \verb|\includegraphics| 命令时，应该将图像文件放在与主文档相同的目录中，或者在参数中指定文件的完整路径。
-
-推荐使用矢量图格式（PDF）用于图表和流程图，位图建议使用 PNG 格式（照片可用 JPG），矢量图在缩放时不会失真。
-
-注意在浮动体内部应使用 \verb|\centering| 命令而非 \verb|\begin{center}...\end{center}| 环境，后者会引入额外的垂直间距。
-
-\subsection{多个图形}
-
-如果需要在同一浮动体中插入多个图形，可以使用 \pkg{subcaption} 宏包（注意：旧的 \pkg{subfigure} 和 \pkg{subfig} 宏包已过时，请勿使用）。这些方法可以按照一定的排列方式组合多个图形，并分别为每个子图形添加标题和标签。
-例如，可以使用 \verb|\subfigure| 命令插入两个水平并列的子图，如\cref{fig:example-subfig-1} 所示。这两个子图共用一个图形计数器，没有各自的子图题。
-
-\begin{figure}[!htb]
+\begin{table}[htbp]
   \centering
-  \includegraphics[width=0.4\textwidth]{example-image-a}
-  \hspace{1cm}
-  \includegraphics[width=0.4\textwidth]{example-image-b}
-  \caption{这是一个示例图形组}
-  \label{fig:example-subfig-1}
-\end{figure}
-
-如果多个图形相互独立，不共用一个图形计数器，可以使用 \texttt{minipage} 或 \texttt{parbox}，如\cref{fig:parallel1,fig:parallel2}。
-
-\begin{figure}[!htb]
-  \begin{minipage}{0.4\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{example-image-a}
-    \caption{并排第一个图}
-    \label{fig:parallel1}
-  \end{minipage}\hfill
-  \begin{minipage}{0.4\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{example-image-b}
-    \caption{并排第二个图}
-    \label{fig:parallel2}
-  \end{minipage}
-\end{figure}
-
-为共用一个计数器的多个子图添加子图题，建议使用较新的 \pkg{subcaption} 宏包，不建议使用 \pkg{subfigure} 或 \pkg{subfig} 等宏包。
-
-\pkg{subcaption} 宏包提供了 \cs{subcaptionbox} 命令，可以方便地实现子图的并排排列，并为每个子图添加子图题，如\cref{fig:subcaptionbox} 所示。此外，也可以使用 \pkg{subcaption} 宏包的 \cs{subcaption} 命令，将子图题放在子图之下，子图号用 a)、b) 等表示。可以将多个子图放在 \texttt{minipage} 中，用法与 \cs{caption} 相同。
-
-\begin{figure}[!htb]
-  \centering
-  \subcaptionbox{左图}{\includegraphics[width=0.4\textwidth]{example-image-a}}
-  \hspace{1cm}
-  \subcaptionbox{右图}{\includegraphics[width=0.3\textwidth]{example-image-b}}
-  \caption{包含子图题的示例（使用 subcaptionbox）}
-  \label{fig:subcaptionbox}
-\end{figure}
-
-另外，\pkg{subcaption} 宏包还提供了 \pkg{subfigure} 和 \pkg{subtable} 环境，如\cref{fig:subfigure} 所示。这些环境的使用方法与 \pkg{subcaptionbox} 相似，可以实现子图的并排排列，并为每个子图添加子图题。
-
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{0.3\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{example-image-a}
-    \caption{左图}
-  \end{subfigure}
-  \hspace{1cm}
-  \begin{subfigure}{0.4\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{example-image-b}
-    \caption{右图}
-  \end{subfigure}
-  \caption{包含子图题的范例（使用 subfigure）}
-  \label{fig:subfigure}
-\end{figure}
-
-总之，在使用 \LaTeX{} 插图时，应该注意浮动体的特性，尽量使用 \pkg{float} 宏包进行浮动体的控制，避免出现排版问题。同时，也应该熟悉插图命令的使用方法，以便于插入单个或多个图形，并设置适当的标题和标签。
-
-
-\section{表格}
-
-\subsection{基本表格}
-
-编排表格时应简单明了、表达一致，内容明晰易懂，表文呼应，内容一致。表题应置于表格上方。
-
-表格的编排建议采用国际通行的三线表\footnote{三线表以其形式简洁、功能分明、阅读方便而在科技论文中被推荐使用。三线表通常只有3条线，即顶线、底线和栏目线，没有竖线。}。可以使用 \pkg{booktabs} 宏包提供的 \cs{toprule}、\cs{midrule} 和 \cs{bottomrule} 命令来绘制三线表。同时，\pkg{longtable} 宏包可以与三线表很好地配合使用，可以排版较长的表格。
-要编写三线表，需要在表格的头部、底部和每一栏之间绘制水平线。其中，\cs{toprule} 绘制顶部线，\cs{midrule} 绘制中部线，\cs{bottomrule} 绘制底部线。可以按照如下方式绘制三线表：
-
-\begin{table}[!hpt]
-  \caption{一个三线表}
-  \label{tab:firstone}
-  \centering
-  \begin{tabular}{@{}llr@{}} \toprule
-    \multicolumn{2}{c}{\textbf{Item}}                            \\ \cmidrule(r){1-2}
-    \textbf{Animal} & \textbf{Description} & \textbf{Price} (\$) \\ \midrule
-    Gnat            & per gram             & 13.65               \\
-                    & each                 & 0.01                \\
-    Gnu             & stuffed              & 92.50               \\
-    Emu             & stuffed              & 33.33               \\
-    Armadillo       & frozen               & 8.99                \\ \bottomrule
+  \caption{模型主要符号定义}\label{tab:model-symbols}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{@{}clp{8.2cm}@{}}
+    \toprule
+    符号                  & 单位        & 含义 \\
+    \midrule
+    $\theta_{wl}, \theta_{wr}$ & rad & 左、右轮转角 \\
+    $\theta_{ll}, \theta_{lr}$ & rad & 左、右虚拟腿摆角 \\
+    $\theta_b$          & rad       & 机体俯仰角 \\
+    $s$                 & m         & 轮轴中心在惯性坐标系中的水平位移 \\
+    $\phi$              & rad       & 机器人偏航角，由左右轮差动及腿部横摆共同决定 \\
+    $R_w$               & m         & 驱动轮半径 \\
+    $l$                 & m         & 对称平面建模下的等效虚拟腿长度 \\
+    $\theta_l$          & rad       & 对称平面建模下的平均虚拟腿摆角，满足 $\theta_l=(\theta_{ll}+\theta_{lr})/2$ \\
+    $l_b$               & m         & 髋关节至机体质心的距离 \\
+    $m_w, m_l, m_b$     & kg        & 分别表示轮组、虚拟腿等效构件和机体的质量 \\
+    $J_w, J_l, J_b$     & kg$\cdot$m$^2$ & 分别表示轮组、虚拟腿等效构件和机体绕质心的转动惯量 \\
+    $F_l$               & N         & 沿虚拟腿方向的轴向虚拟力 \\
+    $T_\theta$          & N$\cdot$m & 绕髋关节作用于虚拟腿的摆动虚拟转矩 \\
+    $T_{lw,l}, T_{lw,r}$ & N$\cdot$m & 左、右轮电机输出转矩 \\
+    $T_{bl,l}, T_{bl,r}$ & N$\cdot$m & 左、右腿驱动关节输出转矩 \\
+    $\boldsymbol{q}$    & --        & 原始广义坐标向量，取 $\boldsymbol{q} = [\theta_{wl},\, \theta_{wr},\, \theta_{ll},\, \theta_{lr},\, \theta_b]^\mathsf{T}$ \\
+    $\boldsymbol{q}_v$  & --        & 平面等效模型广义坐标向量，取 $\boldsymbol{q}_v = [s,\, l,\, \theta_l,\, \theta_b]^\mathsf{T}$ \\
+    \bottomrule
   \end{tabular}
 \end{table}
 
-\subsection{复杂表格}
-
-我们经常会在表格下方标注数据来源，或者对表格里面的条目进行解释。可以用
-\pkg{threeparttable} 实现带有脚注的表格，如\cref{tab:bigtable}。
-
-\begin{table}[!htb]
-  \centering
-  \begin{threeparttable}[b]
-    \caption{一个更大的三线表}
-    \label{tab:bigtable}
-    \begin{tabular}{@{}llrrrrrrr@{}} \toprule
-      \multicolumn{2}{c}{\textbf{Item}} & \multicolumn{2}{c}{\textbf{Category 1}} & \multicolumn{2}{c}{\textbf{Category 2}} & \multicolumn{2}{c}{\textbf{Category 3}} & \multicolumn{1}{c}{\textbf{Total}}                                                                                     \\ \cmidrule(r){1-2} \cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(l){9-9}
-      \textbf{Animal}                   & \textbf{Description}                    & \textbf{Price} (\$)                     & \textbf{Quantity}                       & \textbf{Price} (\$)                & \textbf{Quantity} & \textbf{Price} (\$) & \textbf{Quantity} & \textbf{Price} (\$) \\ \midrule
-      Gnat                              & per gram\tnote{a}                       & 13.65                                   & 100                                     & 12.35                              & 200               & 11.55               & 150               & 3650.00             \\
-                                        & each                                    & 0.01                                    & 5000                                    & 0.01                               & 10000             & 0.009               & 20000             & 550.00              \\
-      Gnu                               & stuffed                                 & 92.50                                   & 10                                      & 94.50                              & 15                & 96.50               & 20                & 5815.00             \\
-      Emu                               & stuffed                                 & 33.33                                   & 25                                      & 34.33                              & 30                & 35.33               & 35                & 2704.95             \\
-      Armadillo                         & frozen                                  & 8.99                                    & 50                                      & 7.99                               & 40                & 6.99                & 30\tnote{b}       & 1094.50             \\ \bottomrule
-    \end{tabular}
-    \begin{tablenotes}
-      \item [a] 第一条脚注。
-      \item [b] 第二条脚注。
-    \end{tablenotes}
-  \end{threeparttable}
-\end{table}
-
-为了编写更复杂的表格，我们可以使用 \href{https://www.tablesgenerator.com/}{Tables Generator} 来生成 \LaTeX{} 代码。该工具可以方便地设置表格的列数、行数、内容、格式、颜色等属性，支持常用的表格类型和样式，并且可以实时生成 \LaTeX{} 代码和预览效果，避免手动编写 \LaTeX{} 代码时出错。
-
-
-如某个表需要转页接排，可以用 \pkg{longtable} 实现。接排时表题省略，表头应重复书
-写，并在右上方写“续表 X”，如\cref{tab:performance}。
-
-\begin{ThreePartTable}
-  \begin{TableNotes}
-    \item[a] 一个脚注
-    \item[b] 另一个脚注
-  \end{TableNotes}
-  \begin{longtable}[c]{c*{6}{r}}
-    \caption{实验数据}
-    \label{tab:performance}                                                                                                                      \\
-    \toprule
-    \textbf{测试程序\tnote{b}} & \multicolumn{1}{c}{\textbf{正常运行}}   & \multicolumn{1}{c}{\textbf{同步}}
-                           & \multicolumn{1}{c}{\textbf{检查点}}    & \multicolumn{1}{c}{\textbf{卷回恢复}}
-                           & \multicolumn{1}{c}{\textbf{进程迁移}}   & \multicolumn{1}{c}{\textbf{检查点}}                                              \\
-                           & \multicolumn{1}{c}{\textbf{时间} (s)} & \multicolumn{1}{c}{\textbf{时间} (s)}
-                           & \multicolumn{1}{c}{\textbf{时间} (s)} & \multicolumn{1}{c}{\textbf{时间} (s)}
-                           & \multicolumn{1}{c}{\textbf{时间} (s)} & \textbf{文件}（KB）                                                               \\
-    \midrule
-    \endfirsthead
-    \multicolumn{7}{r}{\textbf{续表~\thetable}}                                                                                                    \\
-
-    \toprule
-    \textbf{测试程序\tnote{b}} & \multicolumn{1}{c}{\textbf{正常运行}}   & \multicolumn{1}{c}{\textbf{同步}}
-                           & \multicolumn{1}{c}{\textbf{检查点}}    & \multicolumn{1}{c}{\textbf{卷回恢复}}
-                           & \multicolumn{1}{c}{\textbf{进程迁移}}   & \multicolumn{1}{c}{\textbf{检查点}}                                              \\
-                           & \multicolumn{1}{c}{\textbf{时间} (s)} & \multicolumn{1}{c}{\textbf{时间} (s)}
-                           & \multicolumn{1}{c}{\textbf{时间} (s)} & \multicolumn{1}{c}{\textbf{时间} (s)}
-                           & \multicolumn{1}{c}{\textbf{时间} (s)} & \textbf{文件}（KB）                                                               \\
-    \midrule
-    \endhead
-    \hline
-    \multicolumn{7}{r}{续下页}
-    \endfoot
-    \insertTableNotes
-    \endlastfoot
-    CG.C.2                 & 23.05                               & 0.002                               & 0.116          & 0.035 & 0.589 & 32491  \\
-    CG.A.4                 & 15.06                               & 0.003                               & 0.067          & 0.021 & 0.351 & 18211  \\
-    CG.A.8                 & 13.38                               & 0.004                               & 0.072          & 0.023 & 0.210 & 9890   \\
-    CG.B.2                 & 867.45                              & 0.002                               & 0.864          & 0.232 & 3.256 & 228562 \\
-    CG.B.4                 & 501.61                              & 0.003                               & 0.438          & 0.136 & 2.075 & 123862 \\
-    CG.B.8                 & 384.65                              & 0.004                               & 0.457          & 0.108 & 1.235 & 63777  \\
-    MG.A.2                 & 112.27                              & 0.002                               & 0.846\tnote{a} & 0.237 & 3.930 & 236473 \\
-    MG.A.4                 & 59.84                               & 0.003                               & 0.442          & 0.128 & 2.070 & 123875 \\
-    MG.A.8                 & 31.38                               & 0.003                               & 0.476          & 0.114 & 1.041 & 60627  \\
-    MG.B.2                 & 526.28                              & 0.002                               & 0.821          & 0.238 & 4.176 & 236635 \\
-    MG.B.4                 & 280.11                              & 0.003                               & 0.432          & 0.130 & 1.706 & 123793 \\
-    MG.B.8                 & 148.29                              & 0.003                               & 0.442          & 0.116 & 0.893 & 60600  \\
-    LU.A.2                 & 2116.54                             & 0.002                               & 0.110          & 0.030 & 0.532 & 28754  \\
-    LU.A.4                 & 1102.50                             & 0.002                               & 0.069          & 0.017 & 0.255 & 14915  \\
-    LU.A.8                 & 574.47                              & 0.003                               & 0.067          & 0.016 & 0.192 & 8655   \\
-    LU.B.2                 & 9712.87                             & 0.002                               & 0.357          & 0.104 & 1.734 & 101975 \\
-    LU.B.4                 & 4757.80                             & 0.003                               & 0.190          & 0.056 & 0.808 & 53522  \\
-    LU.B.8                 & 2444.05                             & 0.004                               & 0.222          & 0.057 & 0.548 & 30134  \\
-    EP.A.2                 & 123.81                              & 0.002                               & 0.010          & 0.003 & 0.074 & 1834   \\
-    EP.A.4                 & 61.92                               & 0.003                               & 0.011          & 0.004 & 0.073 & 1743   \\
-    EP.A.8                 & 31.06                               & 0.004                               & 0.017          & 0.005 & 0.073 & 1661   \\
-    EP.B.2                 & 495.49                              & 0.001                               & 0.009          & 0.003 & 0.196 & 2011   \\
-    SP.B.4                 & 397.69                              & 0.002                               & 0.015          & 0.005 & 0.122 & 1763   \\
-    SP.B.8                 & 196.74                              & 0.003                               & 0.018          & 0.006 & 0.082 & 1865   \\
-    AA.A.2                 & 13.81                               & 0.002                               & 0.012          & 0.004 & 0.074 & 1362   \\
-    AA.A.4                 & 6.92                                & 0.003                               & 0.011          & 0.003 & 0.073 & 1331   \\
-    AA.A.8                 & 3.06                                & 0.004                               & 0.017          & 0.004 & 0.073 & 1225   \\
-    AA.B.2                 & 49.49                               & 0.001                               & 0.009          & 0.003 & 0.196 & 2254   \\
-    AA.B.4                 & 24.69                               & 0.002                               & 0.012          & 0.004 & 0.122 & 1453   \\
-    AA.B.8                 & 12.74                               & 0.003                               & 0.018          & 0.005 & 0.082 & 1432   \\
-    \bottomrule
-  \end{longtable}
-\end{ThreePartTable}
-
-
-
-\section{算法}
-
-算法环境可以使用 \pkg{algorithms} 宏包或者较新的 \pkg{algorithm2e} 实现。
-\cref{algo:algorithm} 是一个使用 \pkg{algorithms} 的例子。关于排版算法环境
-的具体方法，请阅读相关宏包的官方文档。
-
-\begin{algorithm}
-  \caption{计算斐波那契数列}\label{algo:algorithm}
-  \begin{algorithmic}[1]
-    \Require $n \geq 0$
-    \Ensure $fib(n)$
-    \Function{Fibonacci}{$n$}
-    \If{$n \leq 1$}
-    \State \Return $n$
-    \Else
-    \State \Return \Call{Fibonacci}{$n-1$} + \Call{Fibonacci}{$n-2$}
-    \EndIf
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
-
-\section{代码}
-
-\subsection{代码高亮方式}
-
-本模板提供 \pkg{listings} 和 \pkg{minted} 两种代码高亮方案，可通过文档类选项 \texttt{minted=true}（默认）或 \texttt{minted=false} 切换。\pkg{listings} 是 \LaTeX{} 原生的代码显示包，始终可用，无需外部依赖；\pkg{minted} 基于 Python Pygments，提供更精确的语法解析和更丰富的高亮效果，但需要安装 Python 和 Pygments（\texttt{pip install pygments}），编译时需添加 \texttt{-shell-escape} 参数。若环境受限，可设置 \texttt{minted=false} 回退至 \pkg{listings}。
-
-\subsection{代码块示例}
-
-\pkg{listings} 包是 \LaTeX{} 最常用的代码高亮工具，无论 \texttt{minted} 选项如何设置，它始终可用。以下是一个基本示例：
-
-\begin{lstlisting}[
-  language=Python,         % 指定语法高亮的编程语言
-  caption={使用listings包的Python示例},
-  label=lst:basic-example
-]
-# 这是一个简单的Python函数
-def hello_world(name: str = "World") -> str:
-    """返回个性化问候语"""
-    greeting = f"Hello, {name}!"
-    return greeting
-
-# 调用函数并打印结果
-print(hello_world())  # 输出: Hello, World!
-print(hello_world("LaTeX"))  # 输出: Hello, LaTeX!
-\end{lstlisting}
-
-\pkg{listings} 包支持绝大多数编程语言，如 C/C++、Java、Python、MATLAB、R、SQL 等，使用 \texttt{language} 参数指定即可。
-
-\subsubsection{关于跨页代码段的说明}
-\pkg{listings} 和 \pkg{minted} 均支持跨页显示代码段。一般而言，学术写作中不建议在正文中放置大段代码，建议仅展示关键代码片段，将完整代码放入附录或以外部链接形式提供。
-
-本模板提供了 \texttt{longlisting} 环境，用于排版需要跨页显示并带有标题的代码块。与浮动体代码环境不同，\texttt{longlisting} 不会浮动，可以自然跨越多页。在环境内部放置代码块，并用 \cs{caption} 添加标题即可。以下为示例：
-
-\makeatletter
-\begin{longlisting}
-\iftongjithesis@minted
-\begin{minted}{python}
-from dataclasses import dataclass, field
-from typing import Dict, List, Tuple
-
-# 同济大学五级制绩点对照（2017年版）
-GRADE_TABLE: Dict[str, Tuple[int, int]] = {
-    "A": (5, 95),  # 优 Excellent
-    "B": (4, 85),  # 良 Good
-    "C": (3, 75),  # 中 Fair
-    "D": (2, 65),  # 及格 Pass
-    "F": (0, 30),  # 不及格 Failed
-}
-
-VALID_GRADES = set(GRADE_TABLE.keys())
-
-
-@dataclass
-class Course:
-    """课程信息"""
-    name: str      # 课程名称
-    credits: float # 学分
-    grade: str     # 成绩等级 (A/B/C/D/F)
-
-    def __post_init__(self):
-        if self.grade not in VALID_GRADES:
-            raise ValueError(f"无效的成绩等级: {self.grade}")
-        if self.credits <= 0:
-            raise ValueError(f"学分须为正数: {self.credits}")
-
-    @property
-    def grade_point(self) -> int:
-        """课程绩点"""
-        return GRADE_TABLE[self.grade][0]
-
-    @property
-    def equiv_score(self) -> int:
-        """百分制折算值"""
-        return GRADE_TABLE[self.grade][1]
-
-    def __repr__(self) -> str:
-        return f"{self.name}({self.credits}学分, {self.grade})"
-
-
-@dataclass
-class Transcript:
-    """成绩单：按同济大学本科生成绩计算方法"""
-    student_name: str = ""
-    student_id: str = ""
-    courses: List[Course] = field(default_factory=list)
-
-    def add(self, name: str, credits: float, grade: str) -> None:
-        """添加一门课程成绩"""
-        self.courses.append(Course(name, credits, grade))
-
-    @property
-    def total_credits(self) -> float:
-        """总学分"""
-        return sum(c.credits for c in self.courses)
-
-    @property
-    def gpa(self) -> float:
-        """平均绩点 = sum(学分 * 绩点) / sum(学分)"""
-        if self.total_credits == 0:
-            return 0.0
-        weighted = sum(c.credits * c.grade_point for c in self.courses)
-        return round(weighted / self.total_credits, 2)
-
-    @property
-    def avg_score(self) -> float:
-        """百分制平均成绩 = sum(折算值 * 学分) / sum(学分)"""
-        if self.total_credits == 0:
-            return 0.0
-        weighted = sum(c.credits * c.equiv_score for c in self.courses)
-        return round(weighted / self.total_credits, 1)
-
-    def ranking(self) -> List[Tuple[str, float, int]]:
-        """按绩点降序排列课程"""
-        return sorted(
-            [(c.name, c.credits, c.grade_point) for c in self.courses],
-            key=lambda x: x[2], reverse=True,
-        )
-
-    def summary(self) -> str:
-        """生成成绩摘要"""
-        lines = [f"学生: {self.student_name} ({self.student_id})"]
-        lines.append(f"总学分: {self.total_credits}")
-        lines.append(f"平均绩点 (GPA): {self.gpa}")
-        lines.append(f"百分制平均成绩: {self.avg_score}")
-        return "\n".join(lines)
-
-
-if __name__ == "__main__":
-    t = Transcript("张三", "2024001")
-    t.add("高等数学", 6.0, "A")
-    t.add("线性代数", 4.0, "B")
-    t.add("数据结构", 4.0, "A")
-    t.add("大学物理", 4.0, "C")
-    t.add("程序设计", 3.0, "A")
-
-    print(t.summary())
-    print("\n课程排名:")
-    for name, credits, gp in t.ranking():
-        print(f"  {name}: {credits}学分, 绩点{gp}")
-\end{minted}
-\else
-\begin{lstlisting}[language=Python]
-from dataclasses import dataclass, field
-from typing import Dict, List, Tuple
-
-# 同济大学五级制绩点对照（2017年版）
-GRADE_TABLE: Dict[str, Tuple[int, int]] = {
-    "A": (5, 95),  # 优 Excellent
-    "B": (4, 85),  # 良 Good
-    "C": (3, 75),  # 中 Fair
-    "D": (2, 65),  # 及格 Pass
-    "F": (0, 30),  # 不及格 Failed
-}
-
-VALID_GRADES = set(GRADE_TABLE.keys())
-
-
-@dataclass
-class Course:
-    """课程信息"""
-    name: str      # 课程名称
-    credits: float # 学分
-    grade: str     # 成绩等级 (A/B/C/D/F)
-
-    def __post_init__(self):
-        if self.grade not in VALID_GRADES:
-            raise ValueError(f"无效的成绩等级: {self.grade}")
-        if self.credits <= 0:
-            raise ValueError(f"学分须为正数: {self.credits}")
-
-    @property
-    def grade_point(self) -> int:
-        """课程绩点"""
-        return GRADE_TABLE[self.grade][0]
-
-    @property
-    def equiv_score(self) -> int:
-        """百分制折算值"""
-        return GRADE_TABLE[self.grade][1]
-
-    def __repr__(self) -> str:
-        return f"{self.name}({self.credits}学分, {self.grade})"
-
-
-@dataclass
-class Transcript:
-    """成绩单：按同济大学本科生成绩计算方法"""
-    student_name: str = ""
-    student_id: str = ""
-    courses: List[Course] = field(default_factory=list)
-
-    def add(self, name: str, credits: float, grade: str) -> None:
-        """添加一门课程成绩"""
-        self.courses.append(Course(name, credits, grade))
-
-    @property
-    def total_credits(self) -> float:
-        """总学分"""
-        return sum(c.credits for c in self.courses)
-
-    @property
-    def gpa(self) -> float:
-        """平均绩点 = sum(学分 * 绩点) / sum(学分)"""
-        if self.total_credits == 0:
-            return 0.0
-        weighted = sum(c.credits * c.grade_point for c in self.courses)
-        return round(weighted / self.total_credits, 2)
-
-    @property
-    def avg_score(self) -> float:
-        """百分制平均成绩 = sum(折算值 * 学分) / sum(学分)"""
-        if self.total_credits == 0:
-            return 0.0
-        weighted = sum(c.credits * c.equiv_score for c in self.courses)
-        return round(weighted / self.total_credits, 1)
-
-    def ranking(self) -> List[Tuple[str, float, int]]:
-        """按绩点降序排列课程"""
-        return sorted(
-            [(c.name, c.credits, c.grade_point) for c in self.courses],
-            key=lambda x: x[2], reverse=True,
-        )
-
-    def summary(self) -> str:
-        """生成成绩摘要"""
-        lines = [f"学生: {self.student_name} ({self.student_id})"]
-        lines.append(f"总学分: {self.total_credits}")
-        lines.append(f"平均绩点 (GPA): {self.gpa}")
-        lines.append(f"百分制平均成绩: {self.avg_score}")
-        return "\n".join(lines)
-
-
-if __name__ == "__main__":
-    t = Transcript("张三", "2024001")
-    t.add("高等数学", 6.0, "A")
-    t.add("线性代数", 4.0, "B")
-    t.add("数据结构", 4.0, "A")
-    t.add("大学物理", 4.0, "C")
-    t.add("程序设计", 3.0, "A")
-
-    print(t.summary())
-    print("\n课程排名:")
-    for name, credits, gp in t.ranking():
-        print(f"  {name}: {credits}学分, 绩点{gp}")
-\end{lstlisting}
-\fi
-\caption{跨页代码段示例（Python）}\label{listing:cross-page}
-\end{longlisting}
-\makeatother
-
-行内代码可以使用 \verb|\verb| 命令，或使用高亮命令以获得更好的效果，例如：
-\makeatletter
-\iftongjithesis@minted
-  \mintinline{python}{print("Hello")}
-\else
-  \lstinline[language=Python]{print("Hello")}
-\fi
-\makeatother
-（与普通文本 \verb|print("Hello")| 对比）。
-
-\section{分页控制}
-
-在\LaTeX{}排版系统中，\verb|\newpage| 和 \verb|\clearpage| 命令都能强制开始新页面，但它们有着重要区别。\verb|\newpage| 仅创建新页面，而 \verb|\clearpage| 还会处理所有待处理的浮动体，确保它们在新页面前被正确放置。
-
-使用浮动体（如图、表）时，应当将它们置于适当的浮动环境中，并通过位置选项（如 \verb|[htb]|）来控制它们的排版位置。当需要确保所有浮动体都已处理并开始新页面时，应优先使用 \verb|\clearpage| 而非 \verb|\newpage|。这样可以防止浮动体累积并出现在文档中不合适的位置，导致排版混乱。
-
-合理使用 \verb|\clearpage| 命令和浮动体环境能有效确保文档排版的专业性和整洁度，使论文结构更加清晰有序。
+\section{机器人运动学模型}
+
+\subsection{关键点位置关系}
+
+根据\figref{fig:model-coordinate} 所示几何关系，在对称平面模型下可得轮轴中心、虚拟腿等效质心、髋关节和机体质心在惯性坐标系中的位置分别为
+\begin{equation}
+  \boldsymbol{p}_W =
+  \begin{bmatrix}
+    s \\
+    R_w
+  \end{bmatrix},
+  \label{eq:w-pos}
+\end{equation}
+\begin{equation}
+  \boldsymbol{p}_L =
+  \begin{bmatrix}
+    s + \dfrac{l}{2}\sin\theta_l \\
+    R_w + \dfrac{l}{2}\cos\theta_l
+  \end{bmatrix},
+  \label{eq:l-pos}
+\end{equation}
+\begin{equation}
+  \boldsymbol{p}_H =
+  \begin{bmatrix}
+    s + l\sin\theta_l \\
+    R_w + l\cos\theta_l
+  \end{bmatrix},
+  \label{eq:h-pos}
+\end{equation}
+\begin{equation}
+  \boldsymbol{p}_B =
+  \begin{bmatrix}
+    s + l\sin\theta_l + l_b\sin\theta_b \\
+    R_w + l\cos\theta_l + l_b\cos\theta_b
+  \end{bmatrix}.
+  \label{eq:b-pos}
+\end{equation}
+
+式中，$\boldsymbol{p}_L$ 用于描述虚拟腿等效构件的质心位置，$\boldsymbol{p}_H$ 用于描述髋关节位置，$\boldsymbol{p}_B$ 用于描述机体质心位置。另一方面，由左右轮纯滚动约束可得
+\begin{equation}
+  s = \frac{R_w}{2}\left(\theta_{wl} + \theta_{wr}\right),\qquad
+  \dot{s} = \frac{R_w}{2}\left(\dot{\theta}_{wl} + \dot{\theta}_{wr}\right),\qquad
+  \ddot{s} = \frac{R_w}{2}\left(\ddot{\theta}_{wl} + \ddot{\theta}_{wr}\right).
+  \label{eq:rolling-constraint}
+\end{equation}
+同时，偏航角 $\phi$ 并非独立广义坐标，而是由左右轮差动和腿部横摆共同决定；在仅考虑矢状面对称运动时，可视为 $\phi = 0$。因此，式 \eqref{eq:rolling-constraint} 建立了轮系转角与整机前进位移 $s$ 之间的几何联系，可用于后续控制器状态量与执行器转角的统一表述。
+
+\subsection{速度与加速度关系}
+
+对式 \eqref{eq:l-pos} 和式 \eqref{eq:b-pos} 分别对时间求导，可得虚拟腿等效质心和机体质心的速度表达式
+\begin{equation}
+  \dot{\boldsymbol{p}}_L =
+  \begin{bmatrix}
+    \dot{s} + \dfrac{\dot{l}}{2}\sin\theta_l + \dfrac{l\dot{\theta}_l}{2}\cos\theta_l \\
+    \dfrac{\dot{l}}{2}\cos\theta_l - \dfrac{l\dot{\theta}_l}{2}\sin\theta_l
+  \end{bmatrix},
+  \label{eq:l-vel}
+\end{equation}
+\begin{equation}
+  \dot{\boldsymbol{p}}_B =
+  \begin{bmatrix}
+    \dot{s} + \dot{l}\sin\theta_l + l\dot{\theta}_l\cos\theta_l + l_b\dot{\theta}_b\cos\theta_b \\
+    \dot{l}\cos\theta_l - l\dot{\theta}_l\sin\theta_l - l_b\dot{\theta}_b\sin\theta_b
+  \end{bmatrix}.
+  \label{eq:b-vel}
+\end{equation}
+
+将式 \eqref{eq:b-pos} 写成关于等效广义坐标的函数形式 $\boldsymbol{p}_B = \boldsymbol{p}_B(\boldsymbol{q}_v)$，则机体质心速度可进一步表示为
+\begin{equation}
+  \dot{\boldsymbol{p}}_B = \boldsymbol{J}_B(\boldsymbol{q}_v)\dot{\boldsymbol{q}}_v,
+  \label{eq:body-jacobian}
+\end{equation}
+其中，
+\begin{equation}
+  \boldsymbol{J}_B(\boldsymbol{q}_v) =
+  \begin{bmatrix}
+    1 & \sin\theta_l & l\cos\theta_l & l_b\cos\theta_b \\
+    0 & \cos\theta_l & -l\sin\theta_l & -l_b\sin\theta_b
+  \end{bmatrix}.
+  \label{eq:body-jacobian-matrix}
+\end{equation}
+
+同理，髋关节速度与虚拟腿等效质心速度也可分别由对应位置向量对广义坐标求导得到。由此可见，虚拟腿长度 $l$ 和平均虚拟腿摆角 $\theta_l$ 的变化不仅决定髋关节与机体质心的空间位置，还通过雅可比矩阵直接影响机体平动速度与俯仰耦合特性。这一结论为后续采用 VMC 在任务空间直接调节支撑力与摆动力矩提供了运动学基础。进一步地，$\theta_l$ 与原始变量 $\theta_{ll}$、$\theta_{lr}$ 之间存在显式对应关系，因此该平面等效模型与原始五自由度模型在记号层面是一一对应的。
+
+\section{机器人动力学模型}
+
+\subsection{系统能量表达式}
+
+将机器人平面等效模型视为由轮组、虚拟腿等效构件和机体三部分组成，则系统总动能可写为
+\begin{equation}
+  T = T_w + T_l + T_b,
+  \label{eq:kinetic-total}
+\end{equation}
+其中
+\begin{equation}
+  T_w = \frac{1}{2}m_w\dot{s}^2 + \frac{1}{2}J_w\left(\frac{\dot{s}}{R_w}\right)^2,
+  \label{eq:kinetic-wheel}
+\end{equation}
+\begin{equation}
+  T_l = \frac{1}{2}m_l \dot{\boldsymbol{p}}_L^\mathsf{T}\dot{\boldsymbol{p}}_L + \frac{1}{2}J_l\dot{\theta}_l^2,
+  \label{eq:kinetic-leg}
+\end{equation}
+\begin{equation}
+  T_b = \frac{1}{2}m_b \dot{\boldsymbol{p}}_B^\mathsf{T}\dot{\boldsymbol{p}}_B + \frac{1}{2}J_b\dot{\theta}_b^2.
+  \label{eq:kinetic-body}
+\end{equation}
+
+取地面为势能零位，则系统总势能为
+\begin{equation}
+  V = m_l g\left(R_w + \frac{l}{2}\cos\theta_l\right) + m_b g\left(R_w + l\cos\theta_l + l_b\cos\theta_b\right),
+  \label{eq:potential-total}
+\end{equation}
+式中，轮组重力势能为常数项，对动力学方程无影响，因此未单独列出。
+
+\subsection{拉格朗日方程推导}
+
+定义拉格朗日函数
+\begin{equation}
+  \mathcal{L} = T - V.
+  \label{eq:lagrangian}
+\end{equation}
+对原始模型而言，广义坐标向量已经由式 \eqref{eq:generalized-coordinate-origin} 给出，其动力学可写为
+\begin{equation}
+  \boldsymbol{q} =
+  \begin{bmatrix}
+    \theta_{wl} & \theta_{wr} & \theta_{ll} & \theta_{lr} & \theta_b
+  \end{bmatrix}^{\mathsf{T}},
+  \label{eq:generalized-coordinate}
+\end{equation}
+对应的矩阵形式可写为
+\begin{equation}
+  \boldsymbol{M}(\boldsymbol{q})\ddot{\boldsymbol{q}}
+  +
+  \boldsymbol{K}(\boldsymbol{q}, \dot{\boldsymbol{q}})
+  =
+  \boldsymbol{E}\boldsymbol{u},
+  \label{eq:dynamics-origin}
+\end{equation}
+其中，$\boldsymbol{u}$ 由式 \eqref{eq:input-origin} 定义。为便于开展 VMC 推导，进一步引入平面等效广义坐标
+\begin{equation}
+  \boldsymbol{q}_v =
+  \begin{bmatrix}
+    s & l & \theta_l & \theta_b
+  \end{bmatrix}^{\mathsf{T}}.
+  \label{eq:generalized-coordinate-v}
+\end{equation}
+则对应的等效系统满足拉格朗日方程
+\begin{equation}
+  \frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\partial \mathcal{L}}{\partial \dot{\boldsymbol{q}}_v}\right)
+  -
+  \frac{\partial \mathcal{L}}{\partial \boldsymbol{q}_v}
+  = \boldsymbol{Q}_v,
+  \label{eq:lagrange-equation}
+\end{equation}
+其中，广义力向量取为
+\begin{equation}
+  \boldsymbol{Q}_v =
+  \begin{bmatrix}
+    \dfrac{T_{lw,l} + T_{lw,r}}{2R_w} \\
+    F_l \\
+    T_\theta \\
+    0
+  \end{bmatrix}.
+  \label{eq:generalized-force}
+\end{equation}
+式中，第一个分量表示左右轮驱动转矩在前进方向广义坐标上的等效广义力，第二、三项分别表示 VMC 作用下的虚拟腿轴向力与摆动转矩，机体俯仰自由度本身不直接受驱动，故第四项为零。
+
+将式 \eqref{eq:kinetic-total} 至式 \eqref{eq:generalized-force} 代入式 \eqref{eq:lagrange-equation}，可得机器人平面等效模型的动力学方程
+\begin{equation}
+  \boldsymbol{M}_v(\boldsymbol{q}_v)\ddot{\boldsymbol{q}}_v
+  +
+  \boldsymbol{C}_v(\boldsymbol{q}_v, \dot{\boldsymbol{q}}_v)\dot{\boldsymbol{q}}_v
+  +
+  \boldsymbol{G}_v(\boldsymbol{q}_v)
+  =
+  \boldsymbol{B}_v\boldsymbol{u}_v,
+  \label{eq:dynamics-compact}
+\end{equation}
+其中，
+\begin{equation}
+  \boldsymbol{u}_v =
+  \begin{bmatrix}
+    \dfrac{T_{lw,l} + T_{lw,r}}{2} & F_l & T_\theta
+  \end{bmatrix}^{\mathsf{T}},\qquad
+  \boldsymbol{B}_v =
+  \begin{bmatrix}
+    1/R_w & 0 & 0 \\
+    0 & 1 & 0 \\
+    0 & 0 & 1 \\
+    0 & 0 & 0
+  \end{bmatrix}.
+  \label{eq:input-matrix}
+\end{equation}
+
+系统质量矩阵 $\boldsymbol{M}_v(\boldsymbol{q}_v)$ 具体可写为
+\begin{equation}
+  \boldsymbol{M}_v(\boldsymbol{q}_v) =
+  \begin{bmatrix}
+    m_w + m_l + m_b + J_w/R_w^2 &
+    \left(\dfrac{m_l}{2} + m_b\right)\sin\theta_l &
+    \left(\dfrac{m_l}{2} + m_b\right)l\cos\theta_l &
+    m_b l_b \cos\theta_b \\
+    \left(\dfrac{m_l}{2} + m_b\right)\sin\theta_l &
+    \dfrac{m_l}{4} + m_b &
+    0 &
+    m_b l_b \sin(\theta_l - \theta_b) \\
+    \left(\dfrac{m_l}{2} + m_b\right)l\cos\theta_l &
+    0 &
+    J_l + \dfrac{m_l l^2}{4} + m_b l^2 &
+    m_b l l_b \cos(\theta_l - \theta_b) \\
+    m_b l_b \cos\theta_b &
+    m_b l_b \sin(\theta_l - \theta_b) &
+    m_b l l_b \cos(\theta_l - \theta_b) &
+    J_b + m_b l_b^2
+  \end{bmatrix}.
+  \label{eq:mass-matrix}
+\end{equation}
+
+重力项向量 $\boldsymbol{G}_v(\boldsymbol{q}_v)$ 为
+\begin{equation}
+  \boldsymbol{G}_v(\boldsymbol{q}_v) =
+  \begin{bmatrix}
+    0 \\
+    \left(\dfrac{m_l}{2} + m_b\right) g\cos\theta_l \\
+    -\left(\dfrac{m_l}{2} + m_b\right) gl\sin\theta_l \\
+    -m_b g l_b \sin\theta_b
+  \end{bmatrix}.
+  \label{eq:gravity-vector}
+\end{equation}
+
+科氏力项和离心力项由矩阵 $\boldsymbol{C}_v(\boldsymbol{q}_v, \dot{\boldsymbol{q}}_v)$ 描述，其元素可由 Christoffel 符号统一构造：
+\begin{equation}
+  C_{ij} = \frac{1}{2}\sum_{k=1}^{4}
+  \left(
+    \frac{\partial M_{ij}}{\partial q_k}
+    +
+    \frac{\partial M_{ik}}{\partial q_j}
+    -
+    \frac{\partial M_{jk}}{\partial q_i}
+  \right)\dot{q}_k.
+  \label{eq:christoffel}
+\end{equation}
+式 \eqref{eq:dynamics-origin} 和式 \eqref{eq:dynamics-compact} 表明，原始五自由度模型与平面等效模型之间具有明确的变量映射关系。机体俯仰、腿部伸缩、腿部摆动与整机前进运动之间存在显著耦合关系。例如，虚拟腿长度 $l$ 的变化会同时改变质量矩阵和重力向量，而平均腿摆角 $\theta_l$ 的变化则通过非线性三角函数项影响整机惯性分布和俯仰耦合特性。因此，在控制设计中若直接在关节空间独立调节各驱动关节，往往难以同时兼顾支撑、姿态和运动性能；而采用 VMC 在虚拟腿空间施加轴向力和摆动转矩，则能够更自然地利用上述耦合关系实现控制目标。
+
+\section{五连杆机构的 VMC 运动学与动力学映射}
+
+\subsection{五连杆闭环运动学}
+
+虽然上一节基于虚拟杆给出了便于控制设计的平面等效模型，但机器人实际单腿仍由五连杆闭环机构构成。该机构的几何构型可直接复用第二章中的腿部连杆机构简图，即\figref{fig:leg-linkage}。因此，本节不再重复绘制机构示意图，而是在图 2.1 所示构型基础上进一步建立实际驱动关节空间与虚拟腿空间之间的映射关系。为与全文记号保持统一，将五连杆机构两个主动关节角分别记为 $\theta_{ll}$ 和 $\theta_{lr}$，两个被动关节角分别记为 $\theta_{pl}$ 和 $\theta_{pr}$，基座两铰点分别为 $A$、$D$，末端汇交点为 $P$，则闭环约束可写为
+\begin{equation}
+  \boldsymbol{p}_A + l_1 \boldsymbol{e}(\theta_{ll}) + l_2 \boldsymbol{e}(\theta_{pl})
+  =
+  \boldsymbol{p}_D + l_4 \boldsymbol{e}(\theta_{lr}) + l_3 \boldsymbol{e}(\theta_{pr})
+  =
+  \boldsymbol{p}_P,
+  \label{eq:fivebar-loop}
+\end{equation}
+其中，
+\begin{equation}
+  \boldsymbol{e}(q) =
+  \begin{bmatrix}
+    \cos q \\
+    \sin q
+  \end{bmatrix}.
+  \label{eq:unit-vector}
+\end{equation}
+
+由式 \eqref{eq:fivebar-loop} 可解得末端点 $P$ 的位置 $\boldsymbol{p}_P = [p_s,\ p_h]^\mathsf{T}$，进而定义虚拟腿变量
+\begin{equation}
+  l = \sqrt{p_s^2 + p_h^2},\qquad
+  \theta_l = \operatorname{atan2}(p_s,\, p_h).
+  \label{eq:virtual-leg-from-fivebar}
+\end{equation}
+式 \eqref{eq:virtual-leg-from-fivebar} 表明，五连杆机构的闭环几何关系最终可被映射为虚拟腿长度 $l$ 和平均虚拟腿摆角 $\theta_l$ 两个任务空间变量。对式 \eqref{eq:virtual-leg-from-fivebar} 求导，可得
+\begin{equation}
+  \begin{bmatrix}
+    \dot{l} \\
+    \dot{\theta}_l
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+    \dfrac{p_s}{l} & \dfrac{p_h}{l} \\
+    \dfrac{p_h}{l^2} & -\dfrac{p_s}{l^2}
+  \end{bmatrix}
+  \dot{\boldsymbol{p}}_P.
+  \label{eq:lp-theta-from-p}
+\end{equation}
+
+若将主动关节向量记为 $\boldsymbol{q}_a = [\theta_{ll},\ \theta_{lr}]^\mathsf{T}$，并记末端点速度雅可比矩阵为 $\boldsymbol{J}_P(\boldsymbol{q}_a)$，则有
+\begin{equation}
+  \dot{\boldsymbol{p}}_P = \boldsymbol{J}_P(\boldsymbol{q}_a)\dot{\boldsymbol{q}}_a.
+  \label{eq:endpoint-jacobian}
+\end{equation}
+联立式 \eqref{eq:lp-theta-from-p} 和式 \eqref{eq:endpoint-jacobian}，可得虚拟腿空间与主动关节空间之间的速度映射关系
+\begin{equation}
+  \begin{bmatrix}
+    \dot{l} \\
+    \dot{\theta}_l
+  \end{bmatrix}
+  =
+  \boldsymbol{J}_v(\boldsymbol{q}_a)\dot{\boldsymbol{q}}_a,
+  \qquad
+  \boldsymbol{J}_v(\boldsymbol{q}_a) =
+  \begin{bmatrix}
+    \dfrac{p_s}{l} & \dfrac{p_h}{l} \\
+    \dfrac{p_h}{l^2} & -\dfrac{p_s}{l^2}
+  \end{bmatrix}
+  \boldsymbol{J}_P(\boldsymbol{q}_a).
+  \label{eq:virtual-jacobian}
+\end{equation}
+
+\subsection{基于 VMC 的关节力矩映射}
+
+VMC 的核心在于先在任务空间中构造期望虚拟力，再利用雅可比矩阵将其映射至关节空间。根据虚功原理，有
+\begin{equation}
+  \delta W = \boldsymbol{\tau}^\mathsf{T}\delta\boldsymbol{q}_a
+  =
+  \boldsymbol{F}_v^\mathsf{T}\delta\boldsymbol{x}_v,
+  \label{eq:virtual-work}
+\end{equation}
+其中，
+\begin{equation}
+  \boldsymbol{\tau} =
+  \begin{bmatrix}
+    \tau_1 \\
+    \tau_2
+  \end{bmatrix},
+  \qquad
+  \boldsymbol{x}_v =
+  \begin{bmatrix}
+    l \\
+    \theta_l
+  \end{bmatrix}.
+  \label{eq:joint-torque-and-state}
+\end{equation}
+又由 $\delta\boldsymbol{x}_v = \boldsymbol{J}_v \delta\boldsymbol{q}_a$，可得
+\begin{equation}
+  \boldsymbol{\tau} = \boldsymbol{J}_v^\mathsf{T}\boldsymbol{F}_v
+  =
+  \boldsymbol{J}_v^\mathsf{T}
+  \begin{bmatrix}
+    F_l \\
+    T_\theta
+  \end{bmatrix}.
+  \label{eq:vmc-torque-map}
+\end{equation}
+
+式 \eqref{eq:vmc-torque-map} 给出了从虚拟腿空间到实际五连杆主动关节空间的力矩映射关系。对本文腿部机构而言，式 \eqref{eq:vmc-torque-map} 具有两层意义：其一，轴向虚拟力 $F_l$ 能够被映射为对五连杆闭环机构的支撑输出，从而调节机器人腿长和地面法向支撑；其二，摆动虚拟转矩 $T_\theta$ 能够被映射为驱动腿部前后摆动的关节力矩，从而实现重心调节与姿态控制。因此，VMC 实质上在“任务空间控制目标”与“关节空间执行命令”之间建立了一条明确的解析通道，而其中的任务空间姿态变量正对应全文使用的 $\theta_l$。
+
+\subsection{五连杆动力学表达}
+
+考虑五连杆机构的主动关节空间动力学，可将其写为
+\begin{equation}
+  \boldsymbol{M}_5(\boldsymbol{q}_a)\ddot{\boldsymbol{q}}_a
+  +
+  \boldsymbol{C}_5(\boldsymbol{q}_a, \dot{\boldsymbol{q}}_a)\dot{\boldsymbol{q}}_a
+  +
+  \boldsymbol{G}_5(\boldsymbol{q}_a)
+  =
+  \boldsymbol{\tau}
+  -
+  \boldsymbol{J}_e^\mathsf{T}(\boldsymbol{q}_a)\boldsymbol{F}_{\mathrm{ext}},
+  \label{eq:fivebar-dynamics}
+\end{equation}
+其中，$\boldsymbol{M}_5(\boldsymbol{q}_a)$ 为五连杆主动关节空间的惯性矩阵，$\boldsymbol{C}_5(\boldsymbol{q}_a, \dot{\boldsymbol{q}}_a)$ 为科氏力和离心力矩阵，$\boldsymbol{G}_5(\boldsymbol{q}_a)$ 为重力项，$\boldsymbol{J}_e(\boldsymbol{q}_a)$ 为末端接触雅可比矩阵，$\boldsymbol{F}_{\mathrm{ext}}$ 为地面接触力或其他外载荷。
+
+将式 \eqref{eq:vmc-torque-map} 代入式 \eqref{eq:fivebar-dynamics}，可得五连杆机构在 VMC 作用下的动力学表达式
+\begin{equation}
+  \boldsymbol{M}_5(\boldsymbol{q}_a)\ddot{\boldsymbol{q}}_a
+  +
+  \boldsymbol{C}_5(\boldsymbol{q}_a, \dot{\boldsymbol{q}}_a)\dot{\boldsymbol{q}}_a
+  +
+  \boldsymbol{G}_5(\boldsymbol{q}_a)
+  =
+  \boldsymbol{J}_v^\mathsf{T}(\boldsymbol{q}_a)\boldsymbol{F}_v
+  -
+  \boldsymbol{J}_e^\mathsf{T}(\boldsymbol{q}_a)\boldsymbol{F}_{\mathrm{ext}}.
+  \label{eq:fivebar-vmc-dynamics}
+\end{equation}
+式 \eqref{eq:fivebar-vmc-dynamics} 表明，五连杆机构的实际关节动力学可以统一描述为“虚拟力驱动项”与“外部接触载荷项”的叠加。当给定虚拟腿长度和虚拟腿摆角的目标轨迹后，即可先利用式 \eqref{eq:vmc-law} 生成虚拟力 $\boldsymbol{F}_v$，再由式 \eqref{eq:vmc-torque-map} 求得主动关节力矩命令，从而实现从任务空间目标到底层执行器控制量的闭环映射。这一建模方式兼顾了物理直观性与工程可实现性，尤其适用于本文机器人所采用的闭环腿部结构。
+
+\section{本章小结}
+
+本章面向后续控制系统设计，首先依据虚功等效原理将腿部闭环机构抽象为可伸缩虚拟杆，并在 VMC 框架下定义了腿长方向的轴向虚拟力和摆动方向的虚拟转矩；随后建立了机器人平面等效模型的坐标系与符号体系，推导了关键质点的位置、速度以及整机的运动学关系；在此基础上，进一步利用拉格朗日方法建立了机器人平面等效模型的动力学方程，并给出了质量矩阵、重力向量及输入矩阵的解析形式；最后，针对实际五连杆机构推导了闭环运动学方程、虚拟腿雅可比矩阵以及基于 VMC 的关节力矩映射关系，从而建立起“实际五连杆机构 - 虚拟腿任务空间 - 整机平面动力学模型”之间的统一联系。上述建模结果为第四章的控制器设计与参数整定提供了理论依据。

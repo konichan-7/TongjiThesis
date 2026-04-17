@@ -1,0 +1,422 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Author" content="Apache POI">
+  <meta name="CreationTime" content="2026-04-17T15:16:01Z">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.3">
+  <style type="text/css">
+    p.p1 {margin: 24.0px 0.0px 24.0px 0.0px; font: 26.0px Arial}
+    p.p2 {margin: 19.0px 0.0px 7.0px 0.0px; font: 18.0px Arial}
+    p.p3 {margin: 6.0px 0.0px 6.0px 0.0px; font: 11.0px Arial; color: #646a73}
+    p.p4 {margin: 16.0px 0.0px 6.0px 0.0px; font: 16.0px Arial}
+    p.p5 {margin: 15.0px 0.0px 6.0px 0.0px; font: 15.0px Arial}
+    p.p6 {margin: 6.0px 0.0px 6.0px 0.0px; font: 11.0px Arial}
+    p.p7 {margin: 13.0px 0.0px 6.0px 0.0px; font: 14.0px Arial}
+    p.p8 {margin: 6.0px 0.0px 6.0px 0.0px; text-align: center; font: 12.0px Times; min-height: 14.0px}
+    p.p9 {margin: 6.0px 0.0px 6.0px 0.0px; text-align: center; font: 11.0px Arial; color: #8f959e}
+    p.p10 {margin: 15.0px 0.0px 6.0px 0.0px; font: 15.0px Arial; color: #3370ff}
+    p.p11 {margin: 6.0px 0.0px 6.0px 0.0px; text-align: center; font: 11.0px Arial; min-height: 12.0px}
+    p.p12 {margin: 13.0px 0.0px 6.0px 0.0px; font: 14.0px Arial; color: #3370ff}
+    p.p13 {margin: 16.0px 0.0px 6.0px 0.0px; font: 16.0px Arial; color: #3370ff}
+    p.p14 {margin: 6.0px 0.0px 6.0px 0.0px; font: 11.0px Arial; color: #3370ff}
+    p.p15 {margin: 6.0px 0.0px 6.0px 0.0px; font: 11.0px Arial; color: #646a73; min-height: 12.0px}
+    li.li6 {margin: 6.0px 0.0px 6.0px 0.0px; font: 11.0px Arial}
+    span.s1 {color: #3370ff}
+    span.s2 {color: #000000}
+    span.s3 {font: 11.0px Times}
+    table.t1 {border-collapse: collapse}
+    td.td1 {border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    ul.ul1 {list-style-type: disc}
+  </style>
+</head>
+<body>
+<p class="p1"><b>上交建模详解</b></p>
+<p class="p2"><b>WBR系统建模分析</b></p>
+<p class="p3"><b>[WBR系统建模分析.pdf]</b></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">WBR——Wheeled Biped Robot</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><span class="s1">1. </span><b>问题:</b></p>
+<p class="p5"><span class="s1">1.1 </span><b>什么是独立变量</b></p>
+<p class="p6">四个转矩比较好理解，都是相互独立的。</p>
+<p class="p6">三个角度（轮角、腿角、机体pitch角）也是相互独立的，但注意同样作为状态空间中状态向量的并不是独立的，它们不是直接受力的广义坐标，而是通过<b>运动学几何关系</b>由其他坐标组合而成的。</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">详细解释可见2.3</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p5"><span class="s1">1.2 </span><b>为什么变量是15个？</b></p>
+<p class="p7"><b>5个广义坐标的二阶导数 (运动未知量)</b></p>
+<p class="p6">为了描述机器人的运动，选取了5个广义坐标。在求解动力学时，我们需要求解它们的二阶导数（加速度）：</p>
+<ul class="ul1">
+  <li class="li6">：左轮角加速度。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">：右轮角加速度。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">：左腿倾角的角加速度。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">：右腿倾角的角加速度。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">：机体倾角的角加速度 。</li>
+</ul>
+<p class="p7"><b>10个约束力 (内力和外力未知量)</b></p>
+<p class="p6">为了将系统各部分（轮、腿、机体）分开分析，必须引入连接处的相互作用力和地面的摩擦力：</p>
+<ul class="ul1">
+  <li class="li6">：地面与两个轮子的摩擦力</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">：左轮对左腿的作用力</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">：右轮对右腿的作用力</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">：左腿对机体的作用力</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">：右腿对机体的作用力</li>
+</ul>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">轮子和腿、腿和机体均为<b>铰链</b>相接，根据理论力学作用力只在水平和竖直方向上，不存在力矩</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p5"><span class="s1">1.3 </span><b>15个微分方程是如何推导出来的？</b></p>
+<p class="p6">为了求解这15个未知量，需要建立15个独立的方程。模型将机器人分解为5个刚体部分：<b>左轮、右轮、左腿、右腿、机体</b>，并分别应用牛顿第二定律（平动）和欧拉方程（转动）。</p>
+<p class="p7"><b>第一组：驱动轮的动力学方程 (4个方程)</b></p>
+<p class="p6">对左轮 () 和右轮 () 分别建立方程：</p>
+<ul class="ul1">
+  <li class="li6"><b>x方向平动</b>：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6"><b>转动</b>：</li>
+</ul>
+<p class="p7"><b>第二组：腿部的动力学方程 (6个方程)</b></p>
+<p class="p6">对左腿 () 和右腿 () 分别建立方程：</p>
+<ul class="ul1">
+  <li class="li6"><b>x方向平动</b>：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6"><b>z方向平动</b>：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6"><b>转动</b>：（力矩平衡公式）</li>
+</ul>
+<p class="p7"><b>第三组：机体的动力学方程 (3个方程)</b></p>
+<p class="p6">对机体部分：</p>
+<ul class="ul1">
+  <li class="li6"><b>x方向平动</b>：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6"><b>z方向平动</b>：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6"><b>pitch转动</b>：</li>
+</ul>
+<p class="p7"><b>第四组：整体yaw方程 (1个方程)</b></p>
+<ul class="ul1">
+  <li class="li6"><b>yaw转动</b>：</li>
+</ul>
+<p class="p7"><b>第五组：补充约束方程 (1个方程)</b></p>
+<ul class="ul1">
+  <li class="li6"><b>支持力平衡</b>：</li>
+</ul>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">假设左右腿的支持力保持相等</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p5"><span class="s1">1.4 </span><b>如何从这15个方程得到最终的状态空间方程？</b></p>
+<p class="p6">虽然建立了15个方程，但在控制中我们需要消去那些<b>内力（约束力）</b>，只保留描述运动的微分方程。</p>
+<ul class="ul1">
+  <li class="li6">代入运动学关系：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">第2章推导了各种位移和速度之间的关系（例如<span class="Apple-converted-space">  </span>等如何用<span class="Apple-converted-space">  </span>表示）。将这些运动学公式代入上述动力学方程。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">消元（消去约束力）：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">这是一个线性代数过程。这15个方程对于15个未知量是线性的。通过代数运算，消去那10个约束力变量（） 。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">得到简化方程组：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">消元后，剩下的方程只包含广义坐标（角度、位移）及其导数和输入力矩。这就是文档中 (3.11) ~ (3.15) 展示的5个核心动力学微分方程。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">转化为状态空间：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">最后，利用这5个简化的二阶微分方程，定义状态向量 （包含位置和速度），推导出<span class="Apple-converted-space">  </span>矩阵和<span class="Apple-converted-space">  </span>矩阵，形成最终的<span class="Apple-converted-space">  </span>形式 26。</li>
+</ul>
+<p class="p4"><span class="s1">2. </span><b>详细推导</b></p>
+<p class="p6">建模可能会出现的问题已在上文进行解答，现就<b>最难点</b>：方程组化简与状态空间方程化简进行详细推导</p>
+<p class="p8"><br></p>
+<p class="p9">上交开源的图有些模糊，可看这个图<br>
+</p>
+<p class="p6">现选择5个<b>独立的广义坐标</b>进行运动学和动力学方程的推导<span class="Apple-converted-space"> </span></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">也就是《WBR系统建模分析》中标有*的变量</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p10">2.1 <span class="s2"><b>运动学</b></span></p>
+<p class="p6">运动学方程的推导较为直观，使用广义坐标将各个变量表达出来即可。详细过程见代码</p>
+<p class="p10">2.2 <span class="s2"><b>动力学</b></span></p>
+<p class="p6">15个动力学方程已在<b>1.3</b>中完成了推导。关键在于<b>线性化假设化简</b>&amp;<b>消去约束力</b>后得到的只包含广义坐标的线性方程组——&gt;3.11-3.15，详细化简过程见代码。</p>
+<p class="p6">从3.11-3.15方程可以看出，我们有以下变量：</p>
+<ul class="ul1">
+  <li class="li6">加速度变量：, , , ,<span class="Apple-converted-space"> </span></li>
+</ul>
+<ul class="ul1">
+  <li class="li6">位置变量： , ,<span class="Apple-converted-space"> </span></li>
+</ul>
+<ul class="ul1">
+  <li class="li6">输入变量：, , ,<span class="Apple-converted-space"> </span></li>
+</ul>
+<p class="p6">现在我们将这五个方程写成矩阵形式：</p>
+<p class="p11"><b></b><br></p>
+<p class="p6">其中：</p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">这里的q并不完全是q，而是踢出了</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p6"><b>质量/惯性矩阵<span class="Apple-converted-space">  </span>(5×5)</b></p>
+<p class="p6">对应加速度变量：</p>
+<p class="p11"><br></p>
+<p class="p6"><b>刚度/重力矩阵<span class="Apple-converted-space">  </span>(5×3)</b></p>
+<p class="p6">对应位置变量：</p>
+<p class="p11"><br></p>
+<p class="p6"><b>输入矩阵<span class="Apple-converted-space">  </span>(5×4)</b></p>
+<p class="p6">对应输入变量：</p>
+<p class="p11"><br></p>
+<p class="p5"><span class="s1">2.3 </span><b>状态空间方程</b></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p6">总体思路：先在<b>广义坐标空间</b>解出加速度，再通过变换矩阵映射到<b>状态空间</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p12">2.3.1 <span class="s2"><b>定义向量</b></span></p>
+<p class="p6">首先明确系统的输入、广义坐标和状态向量。</p>
+<ul class="ul1">
+  <li class="li6">广义坐标向量<span class="Apple-converted-space"> </span></li>
+</ul>
+<p class="p6">为了建立动力学方程，我们选取 5 个独立变量作为广义坐标。</p>
+<p class="p11"><br></p>
+<ul class="ul1">
+  <li class="li6">输入向量</li>
+</ul>
+<p class="p6">系统的控制输入为 4 个电机的力矩 ：</p>
+<p class="p11"><br></p>
+<ul class="ul1">
+  <li class="li6">状态向量<span class="Apple-converted-space"> </span></li>
+</ul>
+<p class="p6">状态空间模型描述系统的完整状态，包含位置及其导数（速度）。定义为 10 维向量：</p>
+<p class="p11"><br></p>
+<p class="p7"><span class="s1">2.3.2 </span><b>状态空间方程的形式</b></p>
+<p class="p6">根据状态空间方程的形式可得</p>
+<p class="p11"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">此为线性化后的结果，原始的状态空间方程并不是线性的，可写成，上文推导出的线性的动力学方程组是有关广义坐标呈线性的，并不代表状态向量</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p6">我们将状态向量<span class="Apple-converted-space">  </span>拆分为位置项<span class="Apple-converted-space">  </span>和速度项 ：</p>
+<p class="p11"><br></p>
+<p class="p6">其中，是恒等式（速度是位置的导数），这一部分对应<span class="Apple-converted-space">  </span>矩阵中的单位阵块（例如 <span class="s3">0 1 0...</span> 行），不需要物理推导。</p>
+<p class="p6">我们需要推导 （即状态空间加速度 ） 与状态<span class="Apple-converted-space">  </span>和输入<span class="Apple-converted-space">  </span>的关系：</p>
+<p class="p11"><br></p>
+<p class="p6">因此，<b>只需构建状态向量的二阶导数</b>，即可填补<span class="Apple-converted-space">  </span>和<span class="Apple-converted-space">  </span>矩阵的<b>偶数行</b>。</p>
+<p class="p12">2.3.3 <span class="s2"><b>动力学矩阵</b></span></p>
+<p class="p6">根据2.2可知，线性化后的动力学方程可以写成矩阵形式：</p>
+<p class="p11"><br></p>
+<p class="p6">解出广义加速度 ：</p>
+<p class="p11"><br></p>
+<p class="p6">定义动力学中间矩阵：</p>
+<ul class="ul1">
+  <li class="li6"><b>动力学状态矩阵</b>： ()</li>
+</ul>
+<ul class="ul1">
+  <li class="li6"><b>动力学输入矩阵</b>： ()</li>
+</ul>
+<p class="p6">得到广义坐标下的加速度表达式：</p>
+<p class="p11"><br></p>
+<p class="p6">此时对于一个更加一般的系统，我们假设<span class="Apple-converted-space">  </span>已经是广义坐标<span class="Apple-converted-space">  </span>和输入<span class="Apple-converted-space">  </span>的函数。</p>
+<p class="p6">对于任意变量（可以是广义坐标或输入），广义加速度的偏导数列向量为：</p>
+<p class="p11"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">对于WBR系统，我们有 , ,<span class="Apple-converted-space"> </span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p12">2.3.4 <span class="s2"><b>映射矩阵</b></span></p>
+<p class="p6">我们需要将解出的 映射到<span class="Apple-converted-space"> </span></p>
+<p class="p6">根据文档《WBR系统建模分析.pdf》的运动学推导：</p>
+<ul class="ul1">
+  <li class="li6"><b>位移加速度</b></li>
+</ul>
+<p class="p6">根据《WBR系统建模分析》公式 (2.1) ：</p>
+<p class="p11"><br></p>
+<p class="p6">对时间求两次导数，得到《WBR系统建模分析》公式 (2.10) ：</p>
+<p class="p11"><br></p>
+<p class="p6">矩阵形式：</p>
+<p class="p11"><br></p>
+<ul class="ul1">
+  <li class="li6"><b>yaw角加速度</b><b></b></li>
+</ul>
+<p class="p6">根据 《WBR系统建模分析》 公式 (2.7) ，yaw角<span class="Apple-converted-space">  </span>由轮子的差动和腿部的横向摆动共同决定：</p>
+<p class="p11"><br></p>
+<p class="p6">对时间求两次导数：</p>
+<p class="p11"><br></p>
+<p class="p6">线性化处理（小角度假设）：</p>
+<p class="p6">在建立线性状态空间模型时，我们假设：</p>
+<ul class="ul1">
+  <li class="li6">腿部摆角较小：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">忽略高阶小量（科氏力/离心力项）：</li>
+</ul>
+<p class="p6">化简后得到线性化的yaw加速度：</p>
+<p class="p11"><br></p>
+<p class="p6">矩阵形式：</p>
+<p class="p11"><br></p>
+<ul class="ul1">
+  <li class="li6"><b>关节角加速度</b> <span class="Apple-converted-space"> </span></li>
+</ul>
+<p class="p6">这三项在<span class="Apple-converted-space">  </span>和<span class="Apple-converted-space">  </span>中是完全相同的物理量，因此是恒等映射。</p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p6">将上述推导组合起来，得到完整的变换矩阵 ：</p>
+<p class="p11"><br></p>
+<p class="p12">2.3.5 <span class="s2"><b>链式法则</b></span></p>
+<p class="p6">最后，利用<b>链式法则</b>将动力学与运动学结合，求得状态空间矩阵。</p>
+<p class="p6">链式推导：</p>
+<p class="p6">我们需要求<span class="Apple-converted-space">  </span>关于<span class="Apple-converted-space">  </span>和<span class="Apple-converted-space">  </span>的表达式。</p>
+<p class="p11"><br></p>
+<p class="p6">将<span class="Apple-converted-space">  </span>代入上式：</p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p6">此时设 ，即 :</p>
+<p class="p11"><br></p>
+<p class="p6">更通用的推导逻辑下，我们使用偏导数：</p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p6">以上形式和《WBR系统建模分析》中相同</p>
+<p class="p6"><b>组装最终矩阵：</b></p>
+<ul class="ul1">
+  <li class="li6"><b>A 矩阵 ()</b>：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">奇数行（速度）：对应位置填 1。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">偶数行（加速度）：填入<span class="Apple-converted-space">  </span>的对应列。注意<span class="Apple-converted-space">  </span>包含 ，这些正是状态向量<span class="Apple-converted-space">  </span>的第 5, 7, 9 个分量。因此，将<span class="Apple-converted-space">  </span>的前 3 列填入<span class="Apple-converted-space">  </span>的第 5, 7, 9 列。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6"><b>B 矩阵 ()</b>：</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">奇数行：全为 0。</li>
+</ul>
+<ul class="ul1">
+  <li class="li6">偶数行：直接填入<span class="Apple-converted-space">  </span>的所有行。</li>
+</ul>
+<p class="p13">3. <span class="s2"><b>代码</b></span></p>
+<p class="p6"><b>[该类型的内容暂不支持下载]</b></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">此处<span class="s1">@张涵</span>实现了非常快速的求解AB的方法</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p6">符号求解AB的方法目前总结为两种，一是将3.11-3.15的五个方程整理后，直接求偏导，再带入到推导出的解析式中即广义加速度与状态量加速度的映射；二是先将3.11-3.15的五个方程写成矩阵形式，先求出广义加速度，然后再将广义加速度与映射矩阵相乘。</p>
+<p class="p6">以上两种方法都非常缓慢，第一种尤其缓慢，主要开销集中在求偏导；第二种集中在求一个5x5矩阵的逆。</p>
+<p class="p6">在尝试后放弃了直接求出AB的符号表达式的想法，转而使用数值、符号混合计算的形式，即通过在中间步骤进行数值代入，减少计算量，直接得到数值的AB</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">想求符号版的AB源于比较朴素的想法——求解一次后保存下来此后只需对符号赋值代入就行，但其缓慢的求解速度还是过于离谱，故转投直接计算数值的AB</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p13">4. <span class="s2"><b>思考</b></span></p>
+<p class="p6">如果在建模时增加一个roll的变化，此时方程数为多少个？变量为多少个？</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3">22（15 + roll角加速度、地面对轮的侧向摩擦力x2、轮对腿的侧向作用力x2、腿对机体的侧向作用力x2）</p>
+        <p class="p3">22（15 + 轮y方向平动x2、腿y方向平动x2、腿roll转动x2、机体y方向平动，且修改腿支持力平衡方程为机体roll转动）</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p2"><b>WBR腿部五连杆机构分析</b></p>
+<p class="p3"><b>[WBR腿部五连杆机构分析.pdf]</b></p>
+<p class="p14">五连杆简单入门</p>
+<p class="p6">串联腿的腿部连杆第一眼看上去十分复杂，但其实它的运动学和动力学特性与五连杆一模一样，详见上交开源：</p>
+<p class="p8"><br></p>
+<p class="p2"><b>WBR控制</b></p>
+<p class="p3"><b>[WBR控制.pdf]</b></p>
+<p class="p15"><b></b><br></p>
+</body>
+</html>
