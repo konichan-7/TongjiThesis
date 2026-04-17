@@ -1,23 +1,5 @@
 on:
-  push:
-    branches:
-      - master
-      - proposal
-      - dev
-      - 'feat/**'
-      - 'fix/**'
-      - 'refactor/**'
-    paths-ignore:
-      - '*.md'
-      - 'LICENSE'
-      - '.gitignore'
-      - 'docs/**'
-  pull_request:
-    paths-ignore:
-      - '*.md'
-      - 'LICENSE'
-      - '.gitignore'
-      - 'docs/**'
+  # Keep the workflow available for maintainers, but disable automatic CI runs.
   workflow_dispatch:
 
 name: test
