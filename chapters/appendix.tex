@@ -1,45 +1,305 @@
-\appendixsection{补充数据}\label{sec:appendix-data}
+\appendixsection{机器人运动学方程完整推导}\label{app:kinematics}
 
-本附录提供正文中未详细列出的补充数据与推导过程，供读者参考。
+本附录给出第三章中未完全展开的左右腿运动学方程。为便于与控制器状态变量对应，记左、右轮转角为 $\theta_{w,l}$、$\theta_{w,r}$，左、右虚拟腿摆角为 $\theta_{l,l}$、$\theta_{l,r}$，左、右虚拟腿长度为 $l_l$、$l_r$，轮半径为 $R_w$，半轮距为 $R_l$。
 
-\appendixsubsection{数据处理公式推导}
+\appendixsubsection{位置方程}
 
-根据同济大学本科生成绩计算方法，课程成绩按五级制评定，成绩等级与课程绩点的对应关系如\cref{tab:grading-system}~所示。
+\begin{gather}
+  s = \frac{R_w(\theta_{w,l}+\theta_{w,r})}{2} \\
+  h_b = \frac{l_l\cos\theta_{l,l}}{2}+\frac{l_r\cos\theta_{l,r}}{2} \\
+  s_{l,l} = R_w\theta_{w,l}+l_{w,l}\sin\theta_{l,l} \\
+  s_{l,r} = R_w\theta_{w,r}+l_{w,r}\sin\theta_{l,r} \\
+  h_{l,l} = \frac{l_l\cos\theta_{l,l}}{2}+\frac{l_r\cos\theta_{l,r}}{2}-l_{b,l}\cos\theta_{l,l} \\
+  h_{l,r} = \frac{l_l\cos\theta_{l,l}}{2}+\frac{l_r\cos\theta_{l,r}}{2}-l_{b,r}\cos\theta_{l,r} \\
+  \phi = \frac{R_w(-\theta_{w,l}+\theta_{w,r})}{2R_l}
+  -\frac{l_l\sin\theta_{l,l}}{2R_l}
+  +\frac{l_r\sin\theta_{l,r}}{2R_l} \\
+  s_b = \frac{R_w(\theta_{w,l}+\theta_{w,r})}{2}
+  +\frac{l_l\sin\theta_{l,l}}{2}
+  +\frac{l_r\sin\theta_{l,r}}{2}
+\end{gather}
 
-\begin{table}[!htb]
-  \caption{同济大学本科生成绩等级与绩点对照}\label{tab:grading-system}
-  \centering
-  \begin{tabular}{@{}ccccc@{}} \toprule
-    \textbf{课程成绩} & \textbf{成绩等级} & \textbf{课程绩点} & \textbf{百分制折算值} \\ \midrule
-    优（Excellent） & A & 5 & 95 \\
-    良（Good）      & B & 4 & 85 \\
-    中（Fair）      & C & 3 & 75 \\
-    及格（Pass）    & D & 2 & 65 \\
-    不及格（Failed）& F & 0 & 30 \\ \bottomrule
-  \end{tabular}
-\end{table}
+\appendixsubsection{速度与加速度方程}
 
-平均绩点（GPA）计算公式为：
-\begin{equation}\label{eq:gpa}
-  \text{GPA} = \frac{\sum(\text{课程学分} \times \text{课程绩点})}{\sum\text{课程学分}}
+\begin{gather}
+  \dot{s} = \frac{R_w\dot{\theta}_{w,l}}{2}+\frac{R_w\dot{\theta}_{w,r}}{2} \\
+  \ddot{s} = \frac{R_w\ddot{\theta}_{w,l}}{2}+\frac{R_w\ddot{\theta}_{w,r}}{2} \\
+  \dot{\phi} =
+  -\frac{R_w\dot{\theta}_{w,l}}{2R_l}
+  +\frac{R_w\dot{\theta}_{w,r}}{2R_l}
+  -\frac{\dot{\theta}_{l,l}l_l\cos\theta_{l,l}}{2R_l}
+  +\frac{\dot{\theta}_{l,r}l_r\cos\theta_{l,r}}{2R_l} \\
+  \ddot{\phi} =
+  -\frac{R_w\ddot{\theta}_{w,l}}{2R_l}
+  +\frac{R_w\ddot{\theta}_{w,r}}{2R_l}
+  -\frac{\ddot{\theta}_{l,l}l_l\cos\theta_{l,l}}{2R_l}
+  +\frac{\ddot{\theta}_{l,r}l_r\cos\theta_{l,r}}{2R_l}
+  +\frac{\dot{\theta}_{l,l}^2l_l\sin\theta_{l,l}}{2R_l}
+  -\frac{\dot{\theta}_{l,r}^2l_r\sin\theta_{l,r}}{2R_l} \\
+  \dot{s}_b =
+  \frac{R_w\dot{\theta}_{w,l}}{2}
+  +\frac{R_w\dot{\theta}_{w,r}}{2}
+  +\frac{\dot{\theta}_{l,l}l_l\cos\theta_{l,l}}{2}
+  +\frac{\dot{\theta}_{l,r}l_r\cos\theta_{l,r}}{2} \\
+  \ddot{s}_b =
+  \frac{R_w\ddot{\theta}_{w,l}}{2}
+  +\frac{R_w\ddot{\theta}_{w,r}}{2}
+  +\frac{\ddot{\theta}_{l,l}l_l\cos\theta_{l,l}}{2}
+  +\frac{\ddot{\theta}_{l,r}l_r\cos\theta_{l,r}}{2}
+  -\frac{\dot{\theta}_{l,l}^2l_l\sin\theta_{l,l}}{2}
+  -\frac{\dot{\theta}_{l,r}^2l_r\sin\theta_{l,r}}{2} \\
+  \dot{h}_b =
+  -\frac{\dot{\theta}_{l,l}l_l\sin\theta_{l,l}}{2}
+  -\frac{\dot{\theta}_{l,r}l_r\sin\theta_{l,r}}{2} \\
+  \ddot{h}_b =
+  -\frac{\ddot{\theta}_{l,l}l_l\sin\theta_{l,l}}{2}
+  -\frac{\ddot{\theta}_{l,r}l_r\sin\theta_{l,r}}{2}
+  -\frac{\dot{\theta}_{l,l}^2l_l\cos\theta_{l,l}}{2}
+  -\frac{\dot{\theta}_{l,r}^2l_r\cos\theta_{l,r}}{2}
+\end{gather}
+
+\begin{gather}
+  \dot{s}_{l,l} = R_w\dot{\theta}_{w,l}+\dot{\theta}_{l,l}l_{w,l}\cos\theta_{l,l} \\
+  \dot{s}_{l,r} = R_w\dot{\theta}_{w,r}+\dot{\theta}_{l,r}l_{w,r}\cos\theta_{l,r} \\
+  \ddot{s}_{l,l} = R_w\ddot{\theta}_{w,l}
+  +\ddot{\theta}_{l,l}l_{w,l}\cos\theta_{l,l}
+  -\dot{\theta}_{l,l}^2l_{w,l}\sin\theta_{l,l} \\
+  \ddot{s}_{l,r} = R_w\ddot{\theta}_{w,r}
+  +\ddot{\theta}_{l,r}l_{w,r}\cos\theta_{l,r}
+  -\dot{\theta}_{l,r}^2l_{w,r}\sin\theta_{l,r}
+\end{gather}
+
+\begin{gather}
+  \dot{h}_{l,l} =
+  \dot{\theta}_{l,l}\left(-\frac{l_l\sin\theta_{l,l}}{2}+l_{b,l}\sin\theta_{l,l}\right)
+  -\frac{\dot{\theta}_{l,r}l_r\sin\theta_{l,r}}{2} \\
+  \dot{h}_{l,r} =
+  -\frac{\dot{\theta}_{l,l}l_l\sin\theta_{l,l}}{2}
+  +\dot{\theta}_{l,r}\left(-\frac{l_r\sin\theta_{l,r}}{2}+l_{b,r}\sin\theta_{l,r}\right)
+\end{gather}
+
+\begin{equation}
+\begin{aligned}
+  \ddot{h}_{l,l} &=
+  \ddot{\theta}_{l,l}\left(-\frac{l_l\sin\theta_{l,l}}{2}+l_{b,l}\sin\theta_{l,l}\right)
+  -\frac{\ddot{\theta}_{l,r}l_r\sin\theta_{l,r}}{2} \\
+  &\quad
+  +\dot{\theta}_{l,l}^2\left(-\frac{l_l\cos\theta_{l,l}}{2}+l_{b,l}\cos\theta_{l,l}\right)
+  -\frac{\dot{\theta}_{l,r}^2l_r\cos\theta_{l,r}}{2}
+\end{aligned}
 \end{equation}
-全部课程的百分制平均成绩按以下公式折算：
-\begin{equation}\label{eq:avg-score}
-  \text{百分制平均成绩} = \frac{\sum(\text{百分制成绩折算值} \times \text{课程学分})}{\sum\text{课程学分}}
+
+\begin{equation}
+\begin{aligned}
+  \ddot{h}_{l,r} &=
+  -\frac{\ddot{\theta}_{l,l}l_l\sin\theta_{l,l}}{2}
+  +\ddot{\theta}_{l,r}\left(-\frac{l_r\sin\theta_{l,r}}{2}+l_{b,r}\sin\theta_{l,r}\right) \\
+  &\quad
+  -\frac{\dot{\theta}_{l,l}^2l_l\cos\theta_{l,l}}{2}
+  +\dot{\theta}_{l,r}^2\left(-\frac{l_r\cos\theta_{l,r}}{2}+l_{b,r}\cos\theta_{l,r}\right)
+\end{aligned}
 \end{equation}
 
-\appendixsubsection{补充数据表}
+\appendixsection{机器人动力学方程完整推导}\label{app:dynamics}
 
-\cref{tab:appendix-sample} 列出了更多测试样本的详细数据。
+本附录给出第三章线性状态空间模型所依据的原始动力学方程、线性化方程组和矩阵形式。式中 $f_l$、$f_r$ 为左右轮地面切向作用力，$F_{ws}$、$F_{wh}$ 为轮端与腿部之间的水平和竖直约束力，$F_{bs}$、$F_{bh}$ 为腿部与机体之间的水平和竖直约束力。
 
-\begin{table}[!htb]
-  \caption{补充测试数据}\label{tab:appendix-sample}
-  \centering
-  \begin{tabular}{@{}cccc@{}} \toprule
-    \textbf{样本编号} & \textbf{输入值} & \textbf{输出值} & \textbf{误差} \\ \midrule
-    1 & 0.50 & 0.48 & 0.02 \\
-    2 & 1.00 & 0.97 & 0.03 \\
-    3 & 1.50 & 1.52 & 0.02 \\
-    4 & 2.00 & 1.98 & 0.02 \\ \bottomrule
-  \end{tabular}
-\end{table}
+\appendixsubsection{原始动力学方程}
+
+\begin{gather}
+  R_w\ddot{\theta}_{w,l}m_w = -F_{ws,l}+f_l \\
+  R_w\ddot{\theta}_{w,r}m_w = -F_{ws,r}+f_r \\
+  I_w\ddot{\theta}_{w,l} = -R_wf_l+T_{lw,l} \\
+  I_w\ddot{\theta}_{w,r} = -R_wf_r+T_{lw,r} \\
+  m_l(R_w\ddot{\theta}_{w,l}+\ddot{\theta}_{l,l}l_{w,l}) = -F_{bs,l}+F_{ws,l} \\
+  m_l(R_w\ddot{\theta}_{w,r}+\ddot{\theta}_{l,r}l_{w,r}) = -F_{bs,r}+F_{ws,r} \\
+  0 = -F_{bh,l}+F_{wh,l}-gm_l \\
+  0 = -F_{bh,r}+F_{wh,r}-gm_l
+\end{gather}
+
+\begin{equation}
+\begin{aligned}
+  I_l\ddot{\theta}_{l,l} &=
+  -F_{bs,l}l_{b,l}-F_{ws,l}l_{w,l}+T_{bl,l}-T_{lw,l} \\
+  &\quad
+  +\theta_{l,l}(F_{bh,l}l_{b,l}+F_{wh,l}l_{w,l})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+  I_l\ddot{\theta}_{l,r} &=
+  -F_{bs,r}l_{b,r}-F_{ws,r}l_{w,r}+T_{bl,r}-T_{lw,r} \\
+  &\quad
+  +\theta_{l,r}(F_{bh,r}l_{b,r}+F_{wh,r}l_{w,r})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+  m_b\left(\frac{R_w(\ddot{\theta}_{w,l}+\ddot{\theta}_{w,r})}{2}
+  +\frac{\ddot{\theta}_{l,l}l_l}{2}
+  +\frac{\ddot{\theta}_{l,r}l_r}{2}\right)
+  = F_{bs,l}+F_{bs,r}
+\end{equation}
+
+\begin{gather}
+  0 = F_{bh,l}+F_{bh,r}-gm_b
+\end{gather}
+
+\begin{equation}
+\begin{aligned}
+  I_b\ddot{\theta}_b &=
+  -T_{bl,l}-T_{bl,r} \\
+  &\quad
+  +\theta_b l_c(F_{bh,l}+F_{bh,r})
+  -l_c(F_{bs,l}+F_{bs,r})
+\end{aligned}
+\end{equation}
+
+\begin{gather}
+  I_z\ddot{\phi} = R_l(-f_l+f_r) \\
+  F_{wh,l} = F_{wh,r}
+\end{gather}
+
+\appendixsubsection{线性化后的动力学方程组}
+
+在直立平衡点附近作小角度线性化，并对约束力进行消元，可得以下五个独立方程：
+
+\begin{align}
+  &-T_{bl,l}
+  +T_{lw,l}\left(1+\frac{l_{b,l}}{R_w}+\frac{l_{w,l}}{R_w}\right)
+  +\ddot{\theta}_{l,l}(I_l-l_{b,l}l_{w,l}m_l) \notag\\
+  &\quad
+  +\ddot{\theta}_{w,l}\left(
+  -\frac{I_wl_{b,l}}{R_w}
+  -\frac{I_wl_{w,l}}{R_w}
+  -R_wl_{b,l}m_l
+  -R_wl_{b,l}m_w
+  -R_wl_{w,l}m_w\right) \notag\\
+  &\quad
+  +\theta_{l,l}\left(
+  -\frac{gl_{b,l}m_b}{2}
+  -\frac{gl_{w,l}m_b}{2}
+  -gl_{w,l}m_l\right)=0 \\
+  &-T_{bl,r}
+  +T_{lw,r}\left(1+\frac{l_{b,r}}{R_w}+\frac{l_{w,r}}{R_w}\right)
+  +\ddot{\theta}_{l,r}(I_l-l_{b,r}l_{w,r}m_l) \notag\\
+  &\quad
+  +\ddot{\theta}_{w,r}\left(
+  -\frac{I_wl_{b,r}}{R_w}
+  -\frac{I_wl_{w,r}}{R_w}
+  -R_wl_{b,r}m_l
+  -R_wl_{b,r}m_w
+  -R_wl_{w,r}m_w\right) \notag\\
+  &\quad
+  +\theta_{l,r}\left(
+  -\frac{gl_{b,r}m_b}{2}
+  -\frac{gl_{w,r}m_b}{2}
+  -gl_{w,r}m_l\right)=0 \\
+  &\ddot{\theta}_{l,l}\left(\frac{l_lm_b}{2}+l_{w,l}m_l\right)
+  +\ddot{\theta}_{l,r}\left(\frac{l_rm_b}{2}+l_{w,r}m_l\right) \notag\\
+  &\quad
+  +\ddot{\theta}_{w,l}\left(\frac{I_w}{R_w}+\frac{R_wm_b}{2}+R_wm_l+R_wm_w\right)
+  +\ddot{\theta}_{w,r}\left(\frac{I_w}{R_w}+\frac{R_wm_b}{2}+R_wm_l+R_wm_w\right) \notag\\
+  &\quad
+  -\frac{T_{lw,l}}{R_w}-\frac{T_{lw,r}}{R_w}=0 \\
+  &I_b\ddot{\theta}_b+T_{bl,l}+T_{bl,r}
+  -\ddot{\theta}_{l,l}l_cl_{w,l}m_l
+  -\ddot{\theta}_{l,r}l_cl_{w,r}m_l \notag\\
+  &\quad
+  +\ddot{\theta}_{w,l}\left(-\frac{I_wl_c}{R_w}-R_wl_cm_l-R_wl_cm_w\right)
+  +\ddot{\theta}_{w,r}\left(-\frac{I_wl_c}{R_w}-R_wl_cm_l-R_wl_cm_w\right) \notag\\
+  &\quad
+  -\theta_bgl_cm_b+\frac{T_{lw,l}l_c}{R_w}+\frac{T_{lw,r}l_c}{R_w}=0 \\
+  &-\frac{I_z\ddot{\theta}_{l,l}l_l}{2R_l}
+  +\frac{I_z\ddot{\theta}_{l,r}l_r}{2R_l}
+  +\frac{R_lT_{lw,l}}{R_w}
+  -\frac{R_lT_{lw,r}}{R_w} \notag\\
+  &\quad
+  +\ddot{\theta}_{w,l}\left(-\frac{I_wR_l}{R_w}-\frac{I_zR_w}{2R_l}\right)
+  +\ddot{\theta}_{w,r}\left(\frac{I_wR_l}{R_w}+\frac{I_zR_w}{2R_l}\right)=0
+\end{align}
+
+\appendixsubsection{矩阵形式}
+
+令
+\begin{equation}
+  \ddot{\boldsymbol{q}} =
+  \begin{bmatrix}
+    \ddot{\theta}_{l,l} & \ddot{\theta}_{l,r} & \ddot{\theta}_b &
+    \ddot{\theta}_{w,l} & \ddot{\theta}_{w,r}
+  \end{bmatrix}^{\mathsf{T}}
+  \quad
+  \boldsymbol{q} =
+  \begin{bmatrix}
+    \theta_{l,l} & \theta_{l,r} & \theta_b
+  \end{bmatrix}^{\mathsf{T}}
+  \quad
+  \boldsymbol{u} =
+  \begin{bmatrix}
+    T_{lw,l} & T_{lw,r} & T_{bl,l} & T_{bl,r}
+  \end{bmatrix}^{\mathsf{T}}
+\end{equation}
+则线性化系统可写为
+\begin{equation}
+  \boldsymbol{M}\ddot{\boldsymbol{q}}+\boldsymbol{K}\boldsymbol{q}
+  =
+  \boldsymbol{E}\boldsymbol{u}
+\end{equation}
+
+其中 $\boldsymbol{M}=[M_{ij}]_{5\times5}$ 的非零元素为
+\begin{align}
+  M_{11} &= I_l-l_{b,l}l_{w,l}m_l \\
+  M_{14} &=
+  -\frac{I_wl_{b,l}}{R_w}
+  -\frac{I_wl_{w,l}}{R_w}
+  -R_wl_{b,l}m_l
+  -R_wl_{b,l}m_w
+  -R_wl_{w,l}m_w \\
+  M_{22} &= I_l-l_{b,r}l_{w,r}m_l \\
+  M_{25} &=
+  -\frac{I_wl_{b,r}}{R_w}
+  -\frac{I_wl_{w,r}}{R_w}
+  -R_wl_{b,r}m_l
+  -R_wl_{b,r}m_w
+  -R_wl_{w,r}m_w \\
+  M_{31} &= l_{w,l}m_l+\frac{m_b(l_{b,l}+l_{w,l})}{2} \\
+  M_{32} &= l_{w,r}m_l+\frac{m_b(l_{b,r}+l_{w,r})}{2} \\
+  M_{34} &= M_{35}
+  = \frac{I_w}{R_w}+\frac{R_wm_b}{2}+R_wm_l+R_wm_w \\
+  M_{41} &= -l_cl_{w,l}m_l \qquad
+  M_{42} = -l_cl_{w,r}m_l \qquad
+  M_{43} = I_b \\
+  M_{44} &= M_{45}
+  = -\frac{I_wl_c}{R_w}-R_wl_cm_l-R_wl_cm_w \\
+  M_{51} &= -\frac{I_z(l_{b,l}+l_{w,l})}{2R_l} \\
+  M_{52} &= \frac{I_z(l_{b,r}+l_{w,r})}{2R_l} \\
+  M_{54} &= -\frac{I_wR_l}{R_w}-\frac{I_zR_w}{2R_l} \qquad
+  M_{55} = \frac{I_wR_l}{R_w}+\frac{I_zR_w}{2R_l}
+\end{align}
+其余未列出的 $M_{ij}$ 均为零。
+
+$\boldsymbol{K}=[K_{ij}]_{5\times3}$ 的非零元素为
+\begin{align}
+  K_{11} &= -\frac{gl_{b,l}m_b}{2}-\frac{gl_{w,l}m_b}{2}-gl_{w,l}m_l \\
+  K_{22} &= -\frac{gl_{b,r}m_b}{2}-\frac{gl_{w,r}m_b}{2}-gl_{w,r}m_l \\
+  K_{43} &= -gl_cm_b
+\end{align}
+其余未列出的 $K_{ij}$ 均为零。
+
+$\boldsymbol{E}=[E_{ij}]_{5\times4}$ 的非零元素为
+\begin{align}
+  E_{11} &= -1-\frac{l_{b,l}}{R_w}-\frac{l_{w,l}}{R_w} &
+  E_{13} &= 1 \\
+  E_{22} &= -1-\frac{l_{b,r}}{R_w}-\frac{l_{w,r}}{R_w} &
+  E_{24} &= 1 \\
+  E_{31} &= \frac{1}{R_w} &
+  E_{32} &= \frac{1}{R_w} \\
+  E_{41} &= -\frac{l_c}{R_w} &
+  E_{42} &= -\frac{l_c}{R_w} &
+  E_{43} &= -1 &
+  E_{44} &= -1 \\
+  E_{51} &= -\frac{R_l}{R_w} &
+  E_{52} &= \frac{R_l}{R_w}
+\end{align}
+其余未列出的 $E_{ij}$ 均为零。
