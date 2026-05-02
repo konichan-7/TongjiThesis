@@ -1,0 +1,125 @@
+<mxfile host="Electron">
+  <diagram name="第 1 页" id="9Gxb0vpqIxENYcUbkvtv">
+    <mxGraphModel dx="665" dy="499" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p1AAJc239oHodH_HsSBg-6" edge="1" parent="1" source="jointC" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#FF0000;fontSize=16;labelPosition=left;verticalLabelPosition=top;align=right;labelBackgroundColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" value="$$T$$">
+          <mxGeometry relative="1" x="0.7104" y="18" as="geometry">
+            <mxPoint y="-1" as="offset" />
+            <mxPoint x="240" y="530" as="sourcePoint" />
+            <mxPoint x="440" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="axisX" edge="1" parent="1" style="endArrow=classic;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;labelBackgroundColor=none;fontSize=15;" value="$$x$$">
+          <mxGeometry relative="1" x="0.8333" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="530" y="200" as="sourcePoint" />
+            <mxPoint x="200" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="axisY" edge="1" parent="1" style="endArrow=classic;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;labelPosition=right;verticalLabelPosition=bottom;align=left;labelBackgroundColor=none;fontSize=15;" value="$$y$$">
+          <mxGeometry relative="1" x="0.9556" y="10" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="400" y="130" as="sourcePoint" />
+            <mxPoint x="400" y="600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="L0" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;strokeWidth=2;strokeColor=#999999;fontSize=16;labelPosition=left;verticalLabelPosition=middle;align=right;labelBackgroundColor=none;" value="$$L_0$$">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="400" y="200" as="sourcePoint" />
+            <mxPoint x="350" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="link1" edge="1" parent="1" style="endArrow=none;html=1;strokeWidth=2;labelBackgroundColor=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="jointB" value="">
+          <mxGeometry relative="1" x="0.0569" y="-17" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="400" y="200" as="sourcePoint" />
+            <mxPoint x="250" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="link2" edge="1" parent="1" source="jointC" style="endArrow=none;html=1;strokeWidth=2;labelBackgroundColor=none;" value="">
+          <mxGeometry relative="1" x="-0.0225" y="-22" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="250" y="320" as="sourcePoint" />
+            <mxPoint x="350" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="link4" edge="1" parent="1" style="endArrow=none;html=1;strokeWidth=2;labelBackgroundColor=none;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="jointD" value="">
+          <mxGeometry relative="1" x="-0.0976" y="8" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="400" y="200" as="sourcePoint" />
+            <mxPoint x="500" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="link3" edge="1" parent="1" source="jointD" style="endArrow=none;html=1;strokeWidth=2;labelBackgroundColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" value="">
+          <mxGeometry relative="1" x="-0.008" y="18" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="500" y="280" as="sourcePoint" />
+            <mxPoint x="350" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jointA" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeWidth=2;fontSize=16;labelPosition=left;verticalLabelPosition=top;align=right;" value="$$A(E)$$" vertex="1">
+          <mxGeometry height="7" width="7" x="396" y="197" as="geometry" />
+        </mxCell>
+        <mxCell id="jointB" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeWidth=2;fontSize=16;labelPosition=left;verticalLabelPosition=middle;align=right;" value="$$B$$" vertex="1">
+          <mxGeometry height="7" width="7" x="245" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="jointD" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeWidth=2;fontSize=16;labelPosition=right;verticalLabelPosition=middle;align=left;" value="$$D$$" vertex="1">
+          <mxGeometry height="7" width="7" x="495" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="T1" edge="1" parent="1" style="curved=1;endArrow=classic;html=1;strokeWidth=2;strokeColor=#009900;fontSize=16;labelBackgroundColor=none;" value="$$\tau_1$$">
+          <mxGeometry relative="1" x="0.1617" y="2" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="300" y="235" />
+            </Array>
+            <mxPoint x="355" y="205" as="sourcePoint" />
+            <mxPoint x="350" y="275" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="T2" edge="1" parent="1" style="curved=1;endArrow=classic;html=1;strokeWidth=2;strokeColor=#009900;fontSize=16;labelBackgroundColor=none;" value="$$\tau_2$$">
+          <mxGeometry relative="1" x="-0.3017" y="5" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <Array as="points">
+              <mxPoint x="485" y="300" />
+            </Array>
+            <mxPoint x="465" y="230" as="sourcePoint" />
+            <mxPoint x="405" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Fx" edge="1" parent="1" source="jointC" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#2B7CE9;fontSize=16;labelPosition=right;verticalLabelPosition=bottom;align=left;labelBackgroundColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" value="$$F_x$$">
+          <mxGeometry relative="1" x="0.5556" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="350" y="480" as="sourcePoint" />
+            <mxPoint x="261" y="478" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Fy" edge="1" parent="1" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#2B7CE9;fontSize=16;labelPosition=right;verticalLabelPosition=bottom;align=left;labelBackgroundColor=none;" value="$$F_y$$">
+          <mxGeometry relative="1" x="0.2" y="30" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="350" y="480" as="sourcePoint" />
+            <mxPoint x="350" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="F_total" edge="1" parent="1" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#FF0000;fontSize=16;labelPosition=left;verticalLabelPosition=top;align=right;labelBackgroundColor=none;" value="$$F_l$$">
+          <mxGeometry relative="1" x="-0.0588" y="-11" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="350" y="480" as="sourcePoint" />
+            <mxPoint x="330" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p1AAJc239oHodH_HsSBg-4" edge="1" parent="1" source="jointB" style="endArrow=none;html=1;strokeWidth=2;labelBackgroundColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="jointC" value="">
+          <mxGeometry relative="1" x="-0.0225" y="-22" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="250" y="320" as="sourcePoint" />
+            <mxPoint x="350" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jointC" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeWidth=2;fontSize=16;labelPosition=right;verticalLabelPosition=bottom;align=left;" value="$$C$$" vertex="1">
+          <mxGeometry height="7" width="7" x="347" y="475" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

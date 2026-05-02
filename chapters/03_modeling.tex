@@ -513,20 +513,36 @@ $}
 
 \section{腿部连杆机构分析}
 
-\subsection{闭环运动学建模}
+\subsection{五连杆等效性}
 
-前文为整机建模引入了虚拟腿变量，但样机单腿并不是一根实际伸缩杆，而是第二章给出的混合式闭环连杆机构。为使后续控制器能够直接使用腿长 $l$ 与腿部摆角 $\theta_l$，本节先从运动学约束出发证明该混合式机构与标准平面五连杆机构等效，再推导主动关节角到虚拟腿任务空间变量的映射。
+前文为整机建模引入了虚拟腿长度 $l$ 与虚拟腿摆角 $\theta_l$，但样机单腿并不是一根实际伸缩杆，而是第二章所述的混合式闭环连杆机构。
+该机构一方面通过局部闭链提高支撑刚度，另一方面又希望在控制层保持与标准五连杆\cite{于红英2007平面五杆机构运动学和动力学特性分析}相同的运动学描述。
+因此，本节先证明物理机构可等效为一个同轴的标准五连杆，再在该等效模型上推导雅可比矩阵与 VMC 力矩映射。
 
-腿部机构几何构型见第二章机构简图（\figref{fig:leg-linkage}）。忽略足端轮组自转，并将轮轴中心视为闭链末端汇交点 $P$，则机构的有效运动副由基座两铰点 $A$、$D$、两条主动杆和两条从动杆组成。将两个主动关节角记为 $\theta_{ll}$、$\theta_{lr}$，两个被动关节角记为 $\theta_{pl}$、$\theta_{pr}$。若杆长分别为 $l_1$、$l_2$、$l_3$、$l_4$，则左、右两条支链到达同一末端点 $P$ 的闭环几何约束为
+腿部连杆几何如\figref{fig:leg-linkage} 所示。实际机构中存在由相似三角形或平行四边形支链形成的缩放约束，设缩放比为
 \begin{equation}
-  \boldsymbol{p}_A + l_1 \boldsymbol{e}(\theta_{ll}) + l_2 \boldsymbol{e}(\theta_{pl})
-  =
-  \boldsymbol{p}_D + l_4 \boldsymbol{e}(\theta_{lr}) + l_3 \boldsymbol{e}(\theta_{pr})
-  =
-  \boldsymbol{p}_P
-  \label{eq:mixed-linkage-loop}
+  k = \frac{l_3}{l_2} = \frac{l_4}{l_1} = 0.54
+  \label{eq:scaled-fivebar-ratio}
 \end{equation}
-其中，
+即 $l_3 = k l_2$、$l_4 = k l_1$。
+在忽略连杆自身质量、惯量及关节摩擦的准静态映射中，该比例关系使实际闭环机构与一个虚拟标准五连杆具有相同的末端运动关系。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/ch03/5linkage.png}
+  \caption{同轴五连杆机构简图}
+\end{figure}
+
+以两台腿部驱动电机的等效同轴安装点 $A(E)$ 为原点建立平面坐标系，令主动关节角分别为 $\varphi_1$ 和 $\varphi_4$，末端轮轴中心记为点 $C$。从右侧主支链出发，末端位置可写为
+\begin{equation}
+  \boldsymbol{r}_C
+  =
+  l_1\boldsymbol{e}(\varphi_1)
+  +
+  l_2\boldsymbol{e}(\varphi_2)
+  \label{eq:right-chain-position}
+\end{equation}
+其中
 \begin{equation}
   \boldsymbol{e}(q) =
   \begin{bmatrix}
@@ -535,144 +551,186 @@ $}
   \end{bmatrix}
   \label{eq:unit-vector}
 \end{equation}
+由左侧缩放支链可得，点 $C$ 等效为中间节点位置按 $1/k$ 放大后的结果，即
+\begin{equation}
+  \boldsymbol{r}_C
+  =
+  \frac{1}{k}
+  \left(
+    l_3\boldsymbol{e}(\varphi_4)
+    +
+    l_4\boldsymbol{e}(\theta_4)
+  \right)
+  \label{eq:scaled-chain-position}
+\end{equation}
+将\eqref{eq:scaled-fivebar-ratio} 代入\eqref{eq:scaled-chain-position}，可得
+\begin{equation}
+  \boldsymbol{r}_C
+  =
+  l_2\boldsymbol{e}(\varphi_4)
+  +
+  l_1\boldsymbol{e}(\theta_4)
+  \label{eq:left-chain-equivalent-position}
+\end{equation}
+联立\eqref{eq:right-chain-position} 和\eqref{eq:left-chain-equivalent-position}，得到闭环矢量方程
+\begin{equation}
+  l_1\boldsymbol{e}(\varphi_1)
+  +
+  l_2\boldsymbol{e}(\varphi_2)
+  =
+  l_2\boldsymbol{e}(\varphi_4)
+  +
+  l_1\boldsymbol{e}(\theta_4)
+  \label{eq:equivalent-fivebar-loop}
+\end{equation}
+\eqref{eq:equivalent-fivebar-loop} 正是一个同轴标准五连杆的闭环方程。其右侧支链长度为 $l_1$、$l_2$，左侧虚拟支链长度为 $l_2$、$l_1$，两侧呈交叉对称关系。由此可知，在给定主动关节角 $\varphi_1$、$\varphi_4$ 时，实际缩放五连杆与该虚拟标准五连杆具有相同的末端位置、工作空间和被动关节约束解。
 
-由\eqref{eq:mixed-linkage-loop} 可见，决定末端点 $P$ 的量只包括基座铰点位置、四根等效杆长、两个主动关节角以及由闭环约束确定的两个被动关节角。混合式结构中用于安装轮组、传动件或加强连接的附加构件，在上述假设下不引入新的独立广义坐标，也不改变 $A$、$D$ 到 $P$ 的闭环矢量方程。因此，对任意给定的主动关节角 $\theta_{ll}$、$\theta_{lr}$，混合式闭环机构与标准平面五连杆机构具有相同的被动关节解、末端位置解和可达工作空间。
+进一步地，由于两者的末端位置函数均可写成
+\begin{equation}
+  \boldsymbol{r}_C = f(\varphi_1,\varphi_4)
+  \label{eq:endpoint-position-function}
+\end{equation}
+对其求全微分得到的雅可比矩阵也完全一致。因此，只要控制器使用该等效五连杆计算末端雅可比和力矩分配关系，实际物理机构在运动学和准静态力学意义下均可采用同一套控制映射。
 
-若将主动关节向量记为
+\subsection{雅可比矩阵}
+
+将主动关节向量记为
 \begin{equation}
   \boldsymbol{q}_a =
   \begin{bmatrix}
-    \theta_{ll} & \theta_{lr}
+    \varphi_1 & \varphi_4
   \end{bmatrix}^{\mathsf{T}}
   \label{eq:active-joint-vector-ch3}
 \end{equation}
-则可由闭环约束进一步得到末端速度映射。记
+标准五连杆的正运动学可以通过几何交点求解得到，但显式表达式通常包含反三角函数和根式项，直接对其求导会使雅可比表达式较复杂。为了便于嵌入式实时计算，本文采用闭环长度约束的隐式求导方式推导速度映射。
+
+定义两主动杆末端点为
 \begin{equation}
+  \boldsymbol{p}_B = l_1\boldsymbol{e}(\varphi_1)
+  \qquad
+  \boldsymbol{p}_D = l_2\boldsymbol{e}(\varphi_4)
+  \label{eq:fivebar-active-endpoints}
+\end{equation}
+末端点 $C$ 与点 $B$、$D$ 之间的从动杆长度分别为 $l_2$、$l_1$，因此满足
+\begin{equation}
+  \| \boldsymbol{p}_C - \boldsymbol{p}_B \|^2 = l_2^2
+  \qquad
+  \| \boldsymbol{p}_C - \boldsymbol{p}_D \|^2 = l_1^2
+  \label{eq:equivalent-passive-link-constraint}
+\end{equation}
+令
+\begin{equation}
+  \boldsymbol{u}_l = \frac{\boldsymbol{p}_C-\boldsymbol{p}_B}{l_2}
+  \qquad
+  \boldsymbol{u}_r = \frac{\boldsymbol{p}_C-\boldsymbol{p}_D}{l_1}
+  \qquad
   \boldsymbol{E} =
   \begin{bmatrix}
     0 & -1 \\
     1 & 0
   \end{bmatrix}
-  \quad
-  \boldsymbol{p}_B = \boldsymbol{p}_A + l_1\boldsymbol{e}(\theta_{ll})
-  \quad
-  \boldsymbol{p}_C = \boldsymbol{p}_D + l_4\boldsymbol{e}(\theta_{lr})
-  \label{eq:fivebar-intermediate-points}
+  \label{eq:equivalent-passive-unit-vectors}
 \end{equation}
-其中 $B$、$C$ 分别为左、右主动杆末端。由于从动杆长度保持不变，有
-\begin{equation}
-  \| \boldsymbol{p}_P - \boldsymbol{p}_B \|^2 = l_2^2\qquad
-  \| \boldsymbol{p}_P - \boldsymbol{p}_C \|^2 = l_3^2
-  \label{eq:passive-link-length-constraint}
-\end{equation}
-对\eqref{eq:passive-link-length-constraint} 求导，并令
-\begin{equation}
-  \boldsymbol{u}_l = \frac{\boldsymbol{p}_P-\boldsymbol{p}_B}{l_2}
-  \qquad
-  \boldsymbol{u}_r = \frac{\boldsymbol{p}_P-\boldsymbol{p}_C}{l_3}
-  \label{eq:passive-link-unit-vectors}
-\end{equation}
-可得
+其中 $\boldsymbol{u}_l$、$\boldsymbol{u}_r$ 分别为两根从动杆方向上的单位向量，$\boldsymbol{E}$ 表示平面内逆时针旋转 $90^\circ$ 的矩阵。对\eqref{eq:equivalent-passive-link-constraint} 求导可得
 \begin{equation}
   \begin{bmatrix}
     \boldsymbol{u}_l^\mathsf{T} \\
     \boldsymbol{u}_r^\mathsf{T}
   \end{bmatrix}
-  \dot{\boldsymbol{p}}_P
+  \dot{\boldsymbol{p}}_C
   =
   \begin{bmatrix}
-    \boldsymbol{u}_l^\mathsf{T} l_1\boldsymbol{E}\boldsymbol{e}(\theta_{ll}) & 0 \\
-    0 & \boldsymbol{u}_r^\mathsf{T} l_4\boldsymbol{E}\boldsymbol{e}(\theta_{lr})
+    \boldsymbol{u}_l^\mathsf{T} l_1\boldsymbol{E}\boldsymbol{e}(\varphi_1) & 0 \\
+    0 & \boldsymbol{u}_r^\mathsf{T} l_2\boldsymbol{E}\boldsymbol{e}(\varphi_4)
   \end{bmatrix}
-  \dot{\boldsymbol{q}}_a.
+  \dot{\boldsymbol{q}}_a
   \label{eq:fivebar-implicit-velocity}
 \end{equation}
-只要两条从动杆不共线，式中左侧系数矩阵可逆，于是末端点速度可写为
+当两根从动杆不处于共线奇异位形时，左侧矩阵可逆，末端速度可写为
 \begin{equation}
-  \dot{\boldsymbol{p}}_P = \boldsymbol{J}_P(\boldsymbol{q}_a)\dot{\boldsymbol{q}}_a.
+  \dot{\boldsymbol{p}}_C
+  =
+  \boldsymbol{J}_C(\boldsymbol{q}_a)\dot{\boldsymbol{q}}_a
   \label{eq:endpoint-jacobian}
 \end{equation}
 其中
 \begin{equation}
-  \boldsymbol{J}_P(\boldsymbol{q}_a)
+  \boldsymbol{J}_C(\boldsymbol{q}_a)
   =
   \begin{bmatrix}
     \boldsymbol{u}_l^\mathsf{T} \\
     \boldsymbol{u}_r^\mathsf{T}
   \end{bmatrix}^{-1}
   \begin{bmatrix}
-    \boldsymbol{u}_l^\mathsf{T} l_1\boldsymbol{E}\boldsymbol{e}(\theta_{ll}) & 0 \\
-    0 & \boldsymbol{u}_r^\mathsf{T} l_4\boldsymbol{E}\boldsymbol{e}(\theta_{lr})
-  \end{bmatrix}.
+    \boldsymbol{u}_l^\mathsf{T} l_1\boldsymbol{E}\boldsymbol{e}(\varphi_1) & 0 \\
+    0 & \boldsymbol{u}_r^\mathsf{T} l_2\boldsymbol{E}\boldsymbol{e}(\varphi_4)
+  \end{bmatrix}
   \label{eq:endpoint-jacobian-expression}
 \end{equation}
-\eqref{eq:endpoint-jacobian-expression} 由闭环长度约束直接求导得到，不需要对包含反三角函数的正运动学解析式再次求偏导，因而更适合嵌入式控制器实时计算。由于该速度雅可比只依赖同一组闭环几何约束，混合式闭环机构与标准五连杆机构还具有相同的末端微分运动学关系。基于上述位置与速度层面的等价性，本文后续将该单腿机构称为等效五连杆机构。
+\eqref{eq:endpoint-jacobian-expression} 只包含当前几何位形下的单位向量和基础三角函数，避免了显式正运动学求导带来的复杂代数项。
 
-由\eqref{eq:mixed-linkage-loop} 可解得等效五连杆机构末端点 $P$ 的位置 $\boldsymbol{p}_P = [p_s,\ p_h]^\mathsf{T}$，进而定义虚拟腿变量
+将点 $C$ 在机器人前进方向和竖直方向上的坐标写为 $\boldsymbol{p}_C=[p_s,\ p_h]^\mathsf{T}$，即可定义虚拟腿长度与腿摆角为
 \begin{equation}
-  l = \sqrt{p_s^2 + p_h^2}\qquad
-  \theta_l = \operatorname{atan2}(p_s,\, p_h).
+  l = \sqrt{p_s^2+p_h^2}
+  \qquad
+  \theta_l = \operatorname{atan2}(p_s,\,p_h)
   \label{eq:virtual-leg-from-mixed-linkage}
 \end{equation}
-\eqref{eq:virtual-leg-from-mixed-linkage} 将等效五连杆机构末端位置转换为虚拟腿长度 $l$ 和平均虚拟腿摆角 $\theta_l$。对该式求导，可得
+这里 $\theta_l$ 取相对竖直方向的摆角，因此 $p_s=l\sin\theta_l$、$p_h=l\cos\theta_l$。对\eqref{eq:virtual-leg-from-mixed-linkage} 求导，可得
 \begin{equation}
   \begin{bmatrix}
     \dot{l} \\
     \dot{\theta}_l
   \end{bmatrix}
   =
+  \boldsymbol{S}(\boldsymbol{p}_C)\dot{\boldsymbol{p}}_C
+  \qquad
+  \boldsymbol{S}(\boldsymbol{p}_C)
+  =
   \begin{bmatrix}
     \dfrac{p_s}{l} & \dfrac{p_h}{l} \\
     \dfrac{p_h}{l^2} & -\dfrac{p_s}{l^2}
   \end{bmatrix}
-  \dot{\boldsymbol{p}}_P.
   \label{eq:lp-theta-from-p}
 \end{equation}
-
-联立\eqref{eq:lp-theta-from-p} 和\eqref{eq:endpoint-jacobian}，得到虚拟腿空间与主动关节空间之间的速度映射
+联立\eqref{eq:endpoint-jacobian} 和\eqref{eq:lp-theta-from-p}，得到主动关节空间到虚拟腿任务空间的速度映射
 \begin{equation}
   \begin{bmatrix}
     \dot{l} \\
     \dot{\theta}_l
   \end{bmatrix}
   =
-  \boldsymbol{J}_v(\boldsymbol{q}_a)\dot{\boldsymbol{q}}_a,
+  \boldsymbol{J}_v(\boldsymbol{q}_a)\dot{\boldsymbol{q}}_a
   \qquad
-  \boldsymbol{J}_v(\boldsymbol{q}_a) =
-  \begin{bmatrix}
-    \dfrac{p_s}{l} & \dfrac{p_h}{l} \\
-    \dfrac{p_h}{l^2} & -\dfrac{p_s}{l^2}
-  \end{bmatrix}
-  \boldsymbol{J}_P(\boldsymbol{q}_a).
+  \boldsymbol{J}_v(\boldsymbol{q}_a)
+  =
+  \boldsymbol{S}(\boldsymbol{p}_C)\boldsymbol{J}_C(\boldsymbol{q}_a)
   \label{eq:virtual-jacobian}
 \end{equation}
+\eqref{eq:virtual-jacobian} 是后续 VMC 控制器使用的核心运动学关系。控制系统可由编码器测得的主动关节角实时解算 $l$、$\theta_l$ 及其变化率，从而将复杂闭环腿部机构转化为可伸缩虚拟杆的任务空间描述。
 
-\eqref{eq:virtual-jacobian} 给出了主动关节速度到虚拟腿任务空间速度的映射。控制系统可由编码器测得的关节角和关节角速度实时计算腿长、腿摆角及其变化率。
+\subsection{VMC 静力学力矩映射}
 
-\subsection{闭环静力学分析}
-
-闭环运动学关系给出了主动关节空间到虚拟腿任务空间的微分映射。VMC 控制中，腿长方向的支撑力和腿部摆动方向的虚拟转矩并不直接作用在电机轴上，必须通过静力学关系转换为两个主动关节的电机力矩。本节基于虚功原理推导该映射。
-
-设虚拟腿任务空间变量和主动关节力矩分别为
+VMC 控制器通常在虚拟腿任务空间中给出沿腿长方向的支撑力和绕髋部的摆动虚拟转矩，但电机实际执行的是主动关节力矩。因此，需要将任务空间控制量映射到关节空间。设虚拟腿任务空间变量和主动关节力矩分别为
 \begin{equation}
   \boldsymbol{x}_v =
   \begin{bmatrix}
     l \\
     \theta_l
-  \end{bmatrix}
+  \end{bmatrix},
   \qquad
   \boldsymbol{\tau} =
   \begin{bmatrix}
     \tau_1 \\
     \tau_2
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:joint-torque-and-state}
 \end{equation}
-由\eqref{eq:virtual-jacobian} 可知，任意满足闭环约束的微小虚位移均满足
+由\eqref{eq:virtual-jacobian} 可知，任意满足闭环约束的微小虚位移满足
 \begin{equation}
   \delta\boldsymbol{x}_v
   =
-  \boldsymbol{J}_v(\boldsymbol{q}_a)\delta\boldsymbol{q}_a.
+  \boldsymbol{J}_v(\boldsymbol{q}_a)\delta\boldsymbol{q}_a
   \label{eq:virtual-displacement-compatibility}
 \end{equation}
 若任务空间虚拟广义力为
@@ -681,48 +739,105 @@ $}
   \begin{bmatrix}
     F_l \\
     T_\theta
-  \end{bmatrix}
+  \end{bmatrix},
   \label{eq:virtual-force-vector}
 \end{equation}
-其中 $F_l$ 为沿虚拟腿方向的轴向力，$T_\theta$ 为绕髋部等效点的虚拟摆动转矩。根据虚功原理，在准静态平衡或忽略惯性项的控制力映射中，关节输入虚功与任务空间虚拟力所作虚功相等，即
+其中 $F_l$ 为沿虚拟腿方向的轴向力，$T_\theta$ 为绕髋部等效点的虚拟摆动转矩。根据虚功原理，在准静态平衡或忽略连杆惯性项的控制力映射中，有
 \begin{equation}
-  \delta W = \boldsymbol{\tau}^\mathsf{T}\delta\boldsymbol{q}_a
+  \delta W
   =
-  \boldsymbol{F}_v^\mathsf{T}\delta\boldsymbol{x}_v,
+  \boldsymbol{\tau}^\mathsf{T}\delta\boldsymbol{q}_a
+  =
+  \boldsymbol{F}_v^\mathsf{T}\delta\boldsymbol{x}_v
   \label{eq:virtual-work}
 \end{equation}
-将\eqref{eq:virtual-displacement-compatibility} 代入\eqref{eq:virtual-work}，有
+将\eqref{eq:virtual-displacement-compatibility} 代入\eqref{eq:virtual-work}，可得
 \begin{equation}
   \boldsymbol{\tau}^\mathsf{T}\delta\boldsymbol{q}_a
   =
   \boldsymbol{F}_v^\mathsf{T}\boldsymbol{J}_v\delta\boldsymbol{q}_a
   =
-  \left(\boldsymbol{J}_v^\mathsf{T}\boldsymbol{F}_v\right)^\mathsf{T}
-  \delta\boldsymbol{q}_a.
+  \left(
+    \boldsymbol{J}_v^\mathsf{T}\boldsymbol{F}_v
+  \right)^\mathsf{T}
+  \delta\boldsymbol{q}_a
   \label{eq:virtual-work-substitution}
 \end{equation}
-由于 $\delta\boldsymbol{q}_a$ 为任意独立虚位移，等式两端关于 $\delta\boldsymbol{q}_a$ 的系数必须相等，因此得到任务空间虚拟力到主动关节力矩的静力学映射
+由于 $\delta\boldsymbol{q}_a$ 为任意独立虚位移，最终得到 VMC 任务空间到主动关节空间的力矩映射
 \begin{equation}
-  \boldsymbol{\tau} = \boldsymbol{J}_v^\mathsf{T}\boldsymbol{F}_v
+  \boldsymbol{\tau}
+  =
+  \boldsymbol{J}_v^\mathsf{T}\boldsymbol{F}_v
   =
   \boldsymbol{J}_v^\mathsf{T}
   \begin{bmatrix}
     F_l \\
     T_\theta
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:vmc-torque-map}
 \end{equation}
+\eqref{eq:vmc-torque-map} 表明，腿长支撑力和腿摆虚拟转矩可以通过虚拟腿雅可比矩阵转置直接转换为两个主动关节的电机力矩。
+由于前文已经证明缩放五连杆与标准五连杆具有相同的末端位置函数和雅可比矩阵，该映射同样适用于实际物理腿部机构。
 
-\eqref{eq:vmc-torque-map} 表明，静力学力矩映射由虚拟腿雅可比矩阵的转置给出。对本文腿部机构而言，$F_l$ 主要用于腿长支撑、缓冲与高度调节，$T_\theta$ 主要用于腿部前后摆动和姿态辅助调节。由于 $\boldsymbol{J}_v$ 已由等效五连杆的闭环运动学推导得到，实际控制中只需根据编码器反馈实时更新 $\boldsymbol{J}_v$，即可将 VMC 输出转换为两个主动电机的力矩命令。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.52\textwidth]{figures/ch03/vmc_dyn.png}
+  \caption{VMC 受力映射简图}
+\end{figure}
 
-若控制器先在末端直角坐标系中生成平面力 $\boldsymbol{F}_P=[F_s,\ F_h]^\mathsf{T}$，也可直接利用末端雅可比矩阵得到
+若控制器先将虚拟腿力转换到末端直角坐标系，也可写成等价形式。由 $p_s=l\sin\theta_l$、$p_h=l\cos\theta_l$ 可知，沿腿长方向的单位向量为 $[\sin\theta_l,\ \cos\theta_l]^\mathsf{T}$，沿腿摆角正方向的单位切向量为 $[\cos\theta_l,\ -\sin\theta_l]^\mathsf{T}$。因此，末端直角坐标系中的等效力为
+\begin{equation}
+  \boldsymbol{F}_C
+  =
+  \begin{bmatrix}
+    \sin\theta_l & \dfrac{\cos\theta_l}{l} \\
+    \cos\theta_l & -\dfrac{\sin\theta_l}{l}
+  \end{bmatrix}
+  \begin{bmatrix}
+    F_l \\
+    T_\theta
+  \end{bmatrix}
+  \label{eq:polar-force-to-cartesian-force}
+\end{equation}
+主动关节力矩也可表示为
 \begin{equation}
   \boldsymbol{\tau}
   =
-  \boldsymbol{J}_P^\mathsf{T}(\boldsymbol{q}_a)\boldsymbol{F}_P.
+  \boldsymbol{J}_C^\mathsf{T}(\boldsymbol{q}_a)
+  \boldsymbol{F}_C
   \label{eq:endpoint-force-torque-map}
 \end{equation}
-\eqref{eq:vmc-torque-map} 与\eqref{eq:endpoint-force-torque-map} 的本质相同，区别仅在于任务空间坐标选择不同。前者面向腿长与腿摆角控制，便于和第四章 VMC 控制律连接；后者面向末端平面力控制，便于分析轮轴中心受到外力时的关节力矩需求。
+若采用标准五连杆角度记号，将主动杆角记为 $\phi_1$、$\phi_4$，被动杆角记为 $\phi_2$、$\phi_3$，虚拟腿极坐标记为 $(L_0,\phi_0)$，则从虚拟腿任务空间广义力到主动关节力矩的组合映射矩阵可写成显式形式
+\begin{equation}
+  \boldsymbol{\tau}
+  =
+  \boldsymbol{J}_{C,v}^{\mathsf{T}}
+  \begin{bmatrix}
+    F_l \\
+    T_\theta
+  \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+  \qquad
+  \boldsymbol{J}_{C,v}^{\mathsf{T}}
+  =
+  \begin{bmatrix}
+    \dfrac{l_1\sin(\phi_0-\phi_3)\sin(\phi_1-\phi_2)}
+    {\sin(\phi_3-\phi_2)}
+    &
+    \dfrac{l_1\cos(\phi_0-\phi_3)\sin(\phi_1-\phi_2)}
+    {L_0\sin(\phi_3-\phi_2)}
+    \\[2.2ex]
+    \dfrac{l_4\sin(\phi_0-\phi_2)\sin(\phi_3-\phi_4)}
+    {\sin(\phi_3-\phi_2)}
+    &
+    \dfrac{l_4\cos(\phi_0-\phi_2)\sin(\phi_3-\phi_4)}
+    {L_0\sin(\phi_3-\phi_2)}
+  \end{bmatrix}
+  \label{eq:explicit-vmc-jacobian-transpose}
+\end{equation}
+其中，$L_0$ 与 $\phi_0$ 分别对应本文的虚拟腿长度 $l$ 与腿摆角 $\theta_l$。该式可视为\eqref{eq:polar-force-to-cartesian-force} 与\eqref{eq:endpoint-force-torque-map} 串联后的部署形式，第一列对应腿长方向虚拟力 $F_l$ 的力矩分配，第二列对应摆动虚拟转矩 $T_\theta$ 的力矩分配。
 
 \section{本章小结}
 
