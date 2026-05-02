@@ -148,12 +148,12 @@
 
 腿部力矩传递采用 9 速自行车链条。与同步带相比，滚子链属于啮合传动，平均传动比更稳定，抗拉强度也更高；与常见工业链条相比，自行车链条宽度较小，有利于控制腿部横向尺寸。
 
-在跳跃落地或快速伸腿工况下，链条会承受较大的瞬时拉力。以腿部电机峰值扭矩 $T_{\text{peak}} = 12.5\,\mathrm{N\cdot m}$、链轮等效直径 $d = 0.04907\,\mathrm{m}$ 估算，有效圆周力为
+在跳跃落地或快速伸腿工况下，链条会承受较大的瞬时拉力。以腿部电机说明书给出的峰值扭矩 $T_{\text{peak}} = 7\,\mathrm{N\cdot m}$、链轮等效直径 $d = 0.04907\,\mathrm{m}$ 估算，有效圆周力为
 
 \begin{equation}
   F_t = \frac{2 T_{\text{peak}}}{d}
-  = \frac{2 \times 12.5}{0.04907}
-  \approx 509.5\,\mathrm{N}.
+  = \frac{2 \times 7}{0.04907}
+  \approx 285.3\,\mathrm{N}.
 \end{equation}
 
 主流 9 速自行车链条的最小破坏载荷通常可达到
@@ -166,8 +166,8 @@
 
 \begin{equation}
   S = \frac{F_u}{F_t}
-  = \frac{8500}{509.5}
-  \approx 16.68.
+  = \frac{8500}{285.3}
+  \approx 29.79.
 \end{equation}
 
 即使考虑冲击载荷系数 $K_A \approx 1.5$，链条强度仍有余量。
@@ -280,14 +280,32 @@
   \approx 15.4\,\mathrm{N\cdot m}.
 \end{equation}
 
-上述估算按较保守的工况取值。实际样机为双腿协同支撑，且每条腿由多个连杆和电机共同承担负载，单电机峰值需求会低于该估算。综合质量、体积和控制接口，腿部关节驱动器选用额定扭矩 $3.5\,\mathrm{N\cdot m}$、峰值扭矩 $12.5\,\mathrm{N\cdot m}$ 的无刷减速电机。该电机支持力矩、速度和位置控制模式，满足站立平衡和腿部快速调节需求。
+上述估算按较保守的工况取值。实际样机为双腿协同支撑，且每条腿由两个主动关节电机和闭环连杆机构共同承担负载，单电机峰值需求会低于该估算。综合质量、体积和控制接口，腿部关节驱动器选用额定扭矩 $3\,\mathrm{N\cdot m}$、峰值扭矩 $7\,\mathrm{N\cdot m}$ 的无刷减速电机。该电机支持 MIT、速度和位置控制模式，满足站立平衡和腿部快速调节需求。
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/ch02/image7.png}
+  \includegraphics[width=0.4\textwidth]{figures/ch02/image7.jpg}
   \caption{腿部关节驱动电机}
   \label{fig:leg-motor}
 \end{figure}
+
+\begin{table}[H]
+  \centering
+  \caption{腿部关节驱动电机关键参数}
+  \label{tab:leg-motor-parameters}
+  \begin{tabular}{lcc}
+    \toprule
+    参数 & 数值 & 说明 \\
+    \midrule
+    额定扭矩 & $3\,\mathrm{N\cdot m}$ & 连续输出扭矩 \\
+    峰值扭矩 & $7\,\mathrm{N\cdot m}$ & 短时输出扭矩 \\
+    额定转速 & $120\,\mathrm{r/min}$ & 减速后输出转速 \\
+    空载最大转速 & $200\,\mathrm{r/min}$ & 空载工况 \\
+    减速比 & $10:1$ & 内置减速机构 \\
+    电机质量 & 约 $300\,\mathrm{g}$ & 单个电机 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 对于静态或准静态半蹲支撑工况，若按单腿支撑整机重量进行保守估算，有
 
@@ -298,20 +316,38 @@
   \approx 5.2\,\mathrm{N\cdot m}.
 \end{equation}
 
-双腿支撑时，单腿持续负载约减半，即约为 $2.6\,\mathrm{N\cdot m}$。所选电机额定扭矩为 $3.5\,\mathrm{N\cdot m}$，可覆盖该需求，并为姿态调节和小扰动恢复留出余量。
+双腿支撑时，单腿持续负载约减半，即约为 $2.6\,\mathrm{N\cdot m}$。所选电机额定扭矩为 $3\,\mathrm{N\cdot m}$，可覆盖该需求，并为姿态调节和小扰动恢复留出余量。
 
 \subsection{轮毂电机}
 
-轮毂电机按第 2.5 节的速度、加速和爬坡需求选型。本文选用额定扭矩为 $2.5\,\mathrm{N\cdot m}$ 的减速轮毂电机，并将其直接布置在足端轮组内部。该方案省去额外传动链，轮系角度和速度也可直接用于估计前进位移与速度。
+轮毂电机按第 2.5 节的速度、加速和爬坡需求选型。本文选用额定扭矩为 $2.46\,\mathrm{N\cdot m}$ 的 M3508 减速轮毂电机，并将其直接布置在足端轮组内部。该方案省去额外传动链，轮系角度和速度也可直接用于估计前进位移与速度。
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1.0\textwidth]{figures/ch02/image8.png}
+  \includegraphics[width=0.3\textwidth]{figures/ch02/image8_safe.jpg}
   \caption{足端轮毂电机}
   \label{fig:wheel-motor}
 \end{figure}
 
-根据前述计算，双轮驱动下单轮连续扭矩需求约为 $0.7 \sim 1.0\,\mathrm{N\cdot m}$，所选轮毂电机额定扭矩为 $2.5\,\mathrm{N\cdot m}$，可满足平地加速和一定坡度爬升需求。直接驱动形式还能减少传动回差，使轮系状态估计更简单。
+\begin{table}[H]
+  \centering
+  \caption{足端轮毂电机关键参数}
+  \label{tab:wheel-motor-parameters}
+  \begin{tabular}{lcc}
+    \toprule
+    参数 & 数值 & 说明 \\
+    \midrule
+    额定扭矩 & $2.46\,\mathrm{N\cdot m}$ & 减速箱输出端 \\
+    堵转扭矩 & $3.69\,\mathrm{N\cdot m}$ & 短时极限输出 \\
+    额定转速 & $571\,\mathrm{r/min}$ & 减速后输出转速 \\
+    空载转速 & $587\,\mathrm{r/min}$ & 空载工况 \\
+    最大效率 & $70\%$ & 电机效率 \\
+    电机质量 & $336.4\,\mathrm{g}$ & 单个电机 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+根据前述计算，双轮驱动下单轮连续扭矩需求约为 $0.7 \sim 1.0\,\mathrm{N\cdot m}$，所选轮毂电机额定扭矩为 $2.46\,\mathrm{N\cdot m}$，可满足平地加速和一定坡度爬升需求。直接驱动形式还能减少传动回差，使轮系状态估计更简单。
 
 \section{本章小结}
 
