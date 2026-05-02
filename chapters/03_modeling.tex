@@ -2,12 +2,12 @@
 
 本章先把左右腿等效为可伸缩虚拟杆，建立二维多刚体模型；再针对第二章的混合式闭环连杆机构，给出闭环运动学和任务空间到关节空间的力矩映射；最后将原始广义坐标模型线性化，得到 LQR 控制器所需的状态空间表达式。
 
-\noindent\textbf{建模目标与基本假设}\quad
+\section{建模目标与基本假设}
 
 若直接用全部连杆和关节变量建立三维模型，模型精度会更高，但维度较大，约束关系也更复杂，不适合直接放入嵌入式控制器中实时计算。结合本文控制系统的规模，本章模型需要完成以下工作：
 
 \begin{enumerate}
-  \item 建立二维多刚体模型，描述前进、腿长变化、腿摆和机体俯仰之间的耦合关系；
+  \item 建立二维多刚体模型，描述前进、腿摆角和机体俯仰之间的关系；
   \item 给出轮系转角、腿部摆角与控制器状态变量之间的运动学映射；
   \item 推导 LQR 设计所需的线性化状态空间表达式；
   \item 建立闭环腿部机构的任务空间映射，将 VMC 输出转换为关节力矩命令。
@@ -40,17 +40,8 @@
   \end{bmatrix}
   \label{eq:virtual-force-def}
 \end{equation}
-其中，$F_l$ 为沿虚拟杆方向的轴向虚拟力，用于调节支撑力与腿长；$T_\theta$ 为绕髋关节的虚拟转矩，用于调节腿部摆动姿态。若采用线性弹簧阻尼形式构造虚拟元件，则有
-\begin{equation}
-  \left\{
-    \begin{aligned}
-      F_l      &= K_l (l_d - l) + D_l (\dot{l}_d - \dot{l}) \\
-      T_\theta &= K_\theta (\theta_{ld} - \theta_l) + D_\theta (\dot{\theta}_{ld} - \dot{\theta}_l)
-    \end{aligned}
-  \right.
-  \label{eq:vmc-law}
-\end{equation}
-式中，$l_d$ 与 $\theta_{ld}$ 分别为虚拟腿长和平均虚拟腿摆角的期望值；$K_l$、$D_l$、$K_\theta$ 与 $D_\theta$ 分别为对应方向的虚拟刚度系数与虚拟阻尼系数。这样，腿部控制可先在任务空间中给出支撑力和摆动转矩，再映射到实际关节力矩。
+其中，$F_l$ 为沿虚拟杆方向的轴向虚拟力，用于调节支撑力与腿长；$T_\theta$ 为绕髋关节的虚拟转矩，用于调节腿部摆动姿态。
+这样，腿部控制可先在任务空间中给出支撑力和摆动转矩，再映射到实际关节力矩。
 
 为控制模型复杂度，并使模型与后续分层控制器的职责划分一致，本文作如下假设：
 \begin{enumerate}
@@ -62,15 +53,13 @@
   \item 腿部支撑力由腿部控制器调节，在整机主动力学分析中假设左右腿支撑力保持相等，忽略侧向惯性力矩对运动模型的影响。
 \end{enumerate}
 
-上述假设将建模重点集中在前进、俯仰、腿长和腿摆等主要自由度上，同时把滚转补偿、支撑力分配和轮地异常接触留给第四章控制器及第五章实验验证处理。
-
 \section{坐标系与符号定义}
 
 机器人简化刚体模型及坐标系如\figref{fig:model-coordinate} 所示。取地面惯性坐标系 $\Sigma_I = \{O_I, s, h\}$，其中 $s$ 轴沿机器人前进方向，$h$ 轴竖直向上。轮轴中心记为点 $W$，髋关节记为点 $H$，机体质心记为点 $B$。等效虚拟腿长度记为 $l$，平均虚拟腿摆角记为 $\theta_l$，机体俯仰角记为 $\theta_b$，轮半径记为 $R_w$，轮轴中心水平位移记为 $s$。系统偏航角记为 $\phi$，仅在后续状态空间变量构造中使用。
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.48\textwidth]{figures/ch03/robot.png}
+  \includegraphics[width=0.68\textwidth]{figures/ch03/robot.png}
   \caption{机器人简化刚体模型及坐标系定义}
   \label{fig:model-coordinate}
 \end{figure}
@@ -108,7 +97,7 @@
 
 \section{机器人运动学建模}
 
-本节建立关键点位置、速度与广义坐标之间的关系。根据\figref{fig:model-coordinate}，分别写出轮轴中心、虚拟腿等效质心、髋关节和机体质心的位置，并由此得到速度和雅可比矩阵。
+根据\figref{fig:model-coordinate}，分别写出轮轴中心、虚拟腿等效质心、髋关节和机体质心的位置，并由此得到速度和雅可比矩阵。
 
 为避免正文被展开式打断，本节只保留后续控制设计直接使用的运动学关系；左右腿完整位置、速度和加速度方程见附录 \ref{app:kinematics}.
 
@@ -142,7 +131,7 @@
   \begin{bmatrix}
     s + l\sin\theta_l + l_b\sin\theta_b \\
     R_w + l\cos\theta_l + l_b\cos\theta_b
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:b-pos}
 \end{equation}
 式中，$\boldsymbol{p}_L$、$\boldsymbol{p}_H$ 和 $\boldsymbol{p}_B$ 分别表示虚拟腿等效构件质心、髋关节和机体质心的位置。
@@ -170,13 +159,13 @@
   \begin{bmatrix}
     \dot{s} + \dot{l}\sin\theta_l + l\dot{\theta}_l\cos\theta_l + l_b\dot{\theta}_b\cos\theta_b \\
     \dot{l}\cos\theta_l - l\dot{\theta}_l\sin\theta_l - l_b\dot{\theta}_b\sin\theta_b
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:b-vel}
 \end{equation}
 
 将\eqref{eq:b-pos} 写成关于等效广义坐标 $\boldsymbol{q}_v$ 的函数形式 $\boldsymbol{p}_B = \boldsymbol{p}_B(\boldsymbol{q}_v)$，则机体质心速度可进一步表示为
 \begin{equation}
-  \dot{\boldsymbol{p}}_B = \boldsymbol{J}_B(\boldsymbol{q}_v)\dot{\boldsymbol{q}}_v,
+  \dot{\boldsymbol{p}}_B = \boldsymbol{J}_B(\boldsymbol{q}_v)\dot{\boldsymbol{q}}_v
   \label{eq:body-jacobian}
 \end{equation}
 其中，
@@ -185,7 +174,7 @@
   \begin{bmatrix}
     1 & \sin\theta_l & l\cos\theta_l & l_b\cos\theta_b \\
     0 & \cos\theta_l & -l\sin\theta_l & -l_b\sin\theta_b
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:body-jacobian-matrix}
 \end{equation}
 
@@ -204,21 +193,21 @@
 \end{equation}
 其中
 \begin{equation}
-  T_w = \frac{1}{2}m_w\dot{s}^2 + \frac{1}{2}I_w\left(\frac{\dot{s}}{R_w}\right)^2,
+  T_w = \frac{1}{2}m_w\dot{s}^2 + \frac{1}{2}I_w\left(\frac{\dot{s}}{R_w}\right)^2
   \label{eq:kinetic-wheel}
 \end{equation}
 \begin{equation}
-  T_l = \frac{1}{2}m_l \dot{\boldsymbol{p}}_L^\mathsf{T}\dot{\boldsymbol{p}}_L + \frac{1}{2}I_i\dot{\theta}_l^2,
+  T_l = \frac{1}{2}m_l \dot{\boldsymbol{p}}_L^\mathsf{T}\dot{\boldsymbol{p}}_L + \frac{1}{2}I_i\dot{\theta}_l^2
   \label{eq:kinetic-leg}
 \end{equation}
 \begin{equation}
-  T_b = \frac{1}{2}m_b \dot{\boldsymbol{p}}_B^\mathsf{T}\dot{\boldsymbol{p}}_B + \frac{1}{2}I_b\dot{\theta}_b^2.
+  T_b = \frac{1}{2}m_b \dot{\boldsymbol{p}}_B^\mathsf{T}\dot{\boldsymbol{p}}_B + \frac{1}{2}I_b\dot{\theta}_b^2
   \label{eq:kinetic-body}
 \end{equation}
 
 取地面为势能零位，则系统总势能为
 \begin{equation}
-  V = m_l g\left(R_w + \frac{l}{2}\cos\theta_l\right) + m_b g\left(R_w + l\cos\theta_l + l_b\cos\theta_b\right),
+  V = m_l g\left(R_w + \frac{l}{2}\cos\theta_l\right) + m_b g\left(R_w + l\cos\theta_l + l_b\cos\theta_b\right)
   \label{eq:potential-total}
 \end{equation}
 式中，轮组重力势能为常数项，对动力学方程无影响，因此未单独列出。
@@ -233,7 +222,7 @@
 \end{equation}
 并定义拉格朗日函数
 \begin{equation}
-  \mathcal{L} = T - V.
+  \mathcal{L} = T - V
   \label{eq:lagrangian}
 \end{equation}
 则系统满足
@@ -241,7 +230,7 @@
   \frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\partial \mathcal{L}}{\partial \dot{\boldsymbol{q}}_v}\right)
   -
   \frac{\partial \mathcal{L}}{\partial \boldsymbol{q}_v}
-  = \boldsymbol{Q}_v,
+  = \boldsymbol{Q}_v
   \label{eq:lagrange-equation}
 \end{equation}
 其中广义力向量取为
@@ -252,7 +241,7 @@
     F_l \\
     T_\theta \\
     0
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:generalized-force}
 \end{equation}
 式中，第一个分量为左右轮驱动转矩在前进方向上的等效广义力，第二、三项分别对应 VMC 作用下的虚拟腿轴向力与摆动虚拟转矩。机体俯仰自由度不直接受驱动，因此第四项为零。
@@ -265,7 +254,7 @@
   +
   \boldsymbol{G}_v(\boldsymbol{q}_v)
   =
-  \boldsymbol{B}_v\boldsymbol{u}_v,
+  \boldsymbol{B}_v\boldsymbol{u}_v
   \label{eq:dynamics-compact}
 \end{equation}
 其中，
@@ -280,7 +269,7 @@
     0 & 1 & 0 \\
     0 & 0 & 1 \\
     0 & 0 & 0
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:input-matrix}
 \end{equation}
 
@@ -317,7 +306,7 @@ $}
     \left(\dfrac{m_l}{2} + m_b\right) g\cos\theta_l \\
     -\left(\dfrac{m_l}{2} + m_b\right) gl\sin\theta_l \\
     -m_b g l_b \sin\theta_b
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:gravity-vector}
 \end{equation}
 科氏力项和离心力项由矩阵 $\boldsymbol{C}_v(\boldsymbol{q}_v, \dot{\boldsymbol{q}}_v)$ 描述，其元素可由 Christoffel 符号写为
@@ -329,7 +318,7 @@ $}
     \frac{\partial M_{ik}}{\partial q_j}
     -
     \frac{\partial M_{jk}}{\partial q_i}
-  \right)\dot{q}_k.
+  \right)\dot{q}_k
   \label{eq:christoffel}
 \end{equation}
 
@@ -356,7 +345,7 @@ $}
   \qquad
   \boldsymbol{A}_{\mathrm{dyn}} = -\boldsymbol{M}^{-1}\boldsymbol{K}
   \qquad
-  \boldsymbol{B}_{\mathrm{dyn}} = \boldsymbol{M}^{-1}\boldsymbol{E}.
+  \boldsymbol{B}_{\mathrm{dyn}} = \boldsymbol{M}^{-1}\boldsymbol{E}
   \label{eq:qdd-dyn-ch3}
 \end{equation}
 
@@ -377,7 +366,7 @@ $}
   \begin{bmatrix}
     s & \dot{s} & \phi & \dot{\phi} & \theta_{ll} & \dot{\theta}_{ll} &
     \theta_{lr} & \dot{\theta}_{lr} & \theta_b & \dot{\theta}_b
-  \end{bmatrix}^{\mathsf{T}}.
+  \end{bmatrix}^{\mathsf{T}}
   \label{eq:state-vector-ch3}
 \end{equation}
 其中，前进位移 $s$ 已由\eqref{eq:rolling-constraint} 给出。偏航角 $\phi$ 虽不是原始模型中的独立广义坐标，但可由左右轮差动和左右腿摆动的几何关系近似表示为
@@ -388,7 +377,7 @@ $}
   -
   \frac{l_l}{2R_l}\sin \theta_{ll}
   +
-  \frac{l_r}{2R_l}\sin \theta_{lr}.
+  \frac{l_r}{2R_l}\sin \theta_{lr}
   \label{eq:yaw-kinematic-map-ch3}
 \end{equation}
 \eqref{eq:yaw-kinematic-map-ch3} 表明，偏航姿态由轮差动和左右腿摆角共同决定。对该式在直立平衡点附近作小角度线性化，并忽略 $\dot{\theta}^2$ 等高阶项，可得
@@ -399,7 +388,7 @@ $}
   -
   \frac{l_l}{2R_l}\ddot{\theta}_{ll}
   +
-  \frac{l_r}{2R_l}\ddot{\theta}_{lr}.
+  \frac{l_r}{2R_l}\ddot{\theta}_{lr}
   \label{eq:yaw-acc-linear-ch3}
 \end{equation}
 
@@ -427,7 +416,7 @@ $}
     0 & 0 & 1 & 0 & 0 \\
     0 & 0 & 0 & 1 & 0 \\
     0 & 0 & 0 & 0 & 1
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:tmap-ch3}
 \end{equation}
 
@@ -448,7 +437,7 @@ $}
     0 & 0 & 1 & 0 & 0 \\
     0 & 0 & 0 & 1 & 0 \\
     0 & 0 & 0 & 0 & 1
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:q-xpos-map-ch3}
 \end{equation}
 \eqref{eq:tmap-ch3} 和\eqref{eq:q-xpos-map-ch3} 分别给出了广义加速度到状态加速度、位置状态到广义坐标的映射。
@@ -467,7 +456,7 @@ $}
   \begin{bmatrix}
     \dot{\boldsymbol{x}}_{\mathrm{pos}} \\
     \boldsymbol{x}_{\mathrm{acc}}
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:x-split-ch3}
 \end{equation}
 将\eqref{eq:qdd-dyn-ch3}、\eqref{eq:tmap-def-ch3} 与\eqref{eq:q-xpos-map-def-ch3} 依次联立，可得
@@ -483,7 +472,7 @@ $}
   =
   \boldsymbol{T}_{\mathrm{map}}\boldsymbol{A}_{\mathrm{dyn}}\boldsymbol{P}\boldsymbol{x}_{\mathrm{pos}}
   +
-  \boldsymbol{T}_{\mathrm{map}}\boldsymbol{B}_{\mathrm{dyn}}\boldsymbol{u}.
+  \boldsymbol{T}_{\mathrm{map}}\boldsymbol{B}_{\mathrm{dyn}}\boldsymbol{u}
   \label{eq:xacc-from-qdd-ch3}
 \end{equation}
 记
@@ -516,7 +505,7 @@ $}
   \begin{bmatrix}
     \boldsymbol{0}_{5\times4} \\
     \boldsymbol{B}_p
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:ab-matrix-ch3}
 \end{equation}
 
@@ -534,7 +523,7 @@ $}
   =
   \boldsymbol{p}_D + l_4 \boldsymbol{e}(\theta_{lr}) + l_3 \boldsymbol{e}(\theta_{pr})
   =
-  \boldsymbol{p}_P,
+  \boldsymbol{p}_P
   \label{eq:mixed-linkage-loop}
 \end{equation}
 其中，
@@ -543,7 +532,7 @@ $}
   \begin{bmatrix}
     \cos q \\
     \sin q
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:unit-vector}
 \end{equation}
 
@@ -565,15 +554,15 @@ $}
     1 & 0
   \end{bmatrix}
   \quad
-  \boldsymbol{p}_B = \boldsymbol{p}_A + l_1\boldsymbol{e}(\theta_{ll}),
+  \boldsymbol{p}_B = \boldsymbol{p}_A + l_1\boldsymbol{e}(\theta_{ll})
   \quad
-  \boldsymbol{p}_C = \boldsymbol{p}_D + l_4\boldsymbol{e}(\theta_{lr}),
+  \boldsymbol{p}_C = \boldsymbol{p}_D + l_4\boldsymbol{e}(\theta_{lr})
   \label{eq:fivebar-intermediate-points}
 \end{equation}
 其中 $B$、$C$ 分别为左、右主动杆末端。由于从动杆长度保持不变，有
 \begin{equation}
-  \| \boldsymbol{p}_P - \boldsymbol{p}_B \|^2 = l_2^2,\qquad
-  \| \boldsymbol{p}_P - \boldsymbol{p}_C \|^2 = l_3^2.
+  \| \boldsymbol{p}_P - \boldsymbol{p}_B \|^2 = l_2^2\qquad
+  \| \boldsymbol{p}_P - \boldsymbol{p}_C \|^2 = l_3^2
   \label{eq:passive-link-length-constraint}
 \end{equation}
 对\eqref{eq:passive-link-length-constraint} 求导，并令
@@ -739,4 +728,4 @@ $}
 
 本章建立了双轮足机器人的运动学与动力学模型。先给出广义坐标、控制输入和基本假设，将闭环腿部机构等效为可伸缩虚拟杆，并定义 VMC 中的轴向虚拟力 $F_l$ 与摆动虚拟转矩 $T_\theta$。然后建立平面等效模型的坐标系，推导轮轴中心、虚拟腿等效质心、髋关节和机体质心的位置、速度及雅可比表达。在此基础上，采用拉格朗日方法得到多刚体系统动力学方程，并写出质量矩阵、重力项、输入矩阵以及科氏力和离心力项。
 
-之后结合轮系纯滚动约束和偏航运动学近似，推导面向 LQR 控制器的线性状态空间模型。针对五连杆腿部机构，先证明混合式闭环连杆机构与标准五连杆机构在运动学上等效，再建立闭环运动学关系、虚拟腿雅可比矩阵以及基于虚功原理的任务空间到关节空间力矩映射。这些模型将在第四章用于分层控制器设计。
+之后结合轮系纯滚动约束和偏航运动学近似，推导面向 LQR 控制器的线性状态空间模型。针对五连杆腿部机构，先证明混合式闭环连杆机构与标准五连杆机构在运动学上等效，再建立闭环运动学关系、虚拟腿雅可比矩阵以及基于虚功原理的任务空间到关节空间力矩映射。
