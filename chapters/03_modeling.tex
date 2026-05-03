@@ -2,7 +2,7 @@
 
 本章先把左右腿等效为可伸缩虚拟杆，建立二维多刚体模型；再针对第二章的混合式闭环连杆机构，给出闭环运动学和任务空间到关节空间的力矩映射；最后将原始广义坐标模型线性化，得到 LQR 控制器所需的状态空间表达式。
 
-\section{建模目标与基本假设}
+\section{建模与假设}
 
 若直接用全部连杆和关节变量建立三维模型，模型精度会更高，但维度较大，约束关系也更复杂，不适合直接放入嵌入式控制器中实时计算。结合本文控制系统的规模，本章模型需要完成以下工作：
 
@@ -89,6 +89,8 @@
     $T_\theta$ & N$\cdot$m & 绕髋关节作用于虚拟腿的摆动虚拟转矩 \\
     $T_{lw,l} T_{lw,r}$ & N$\cdot$m & 左、右轮电机输出转矩 \\
     $T_{bl,l} T_{bl,r}$ & N$\cdot$m & 左、右腿驱动关节输出转矩 \\
+    $F_{bl,l} F_{bl,r}$ & N & 左、右腿虚拟推力 \\
+    $\tau_1 \tau_2 \tau_3  \tau_4$ & N$\cdot$m & 关节实际转矩 \\
     $\boldsymbol{q}$ & -- & 原始广义坐标向量，取 $\boldsymbol{q} = [\theta_{wl}\, \theta_{wr}\, \theta_{ll}\, \theta_{lr}\, \theta_b]^\mathsf{T}$ \\
     $\boldsymbol{q}_v$ & -- & 二维等效模型广义坐标向量，取 $\boldsymbol{q}_v = [s,\, l,\, \theta_l,\, \theta_b]^\mathsf{T}$ \\
     \bottomrule
@@ -138,9 +140,9 @@
 
 由左右轮纯滚动约束可得
 \begin{equation}
-  s = \frac{R_w}{2}\left(\theta_{wl} + \theta_{wr}\right),\qquad
-  \dot{s} = \frac{R_w}{2}\left(\dot{\theta}_{wl} + \dot{\theta}_{wr}\right),\qquad
-  \ddot{s} = \frac{R_w}{2}\left(\ddot{\theta}_{wl} + \ddot{\theta}_{wr}\right).
+  s = \frac{R_w}{2}\left(\theta_{wl} + \theta_{wr}\right)\qquad
+  \dot{s} = \frac{R_w}{2}\left(\dot{\theta}_{wl} + \dot{\theta}_{wr}\right)\qquad
+  \ddot{s} = \frac{R_w}{2}\left(\ddot{\theta}_{wl} + \ddot{\theta}_{wr}\right)
   \label{eq:rolling-constraint}
 \end{equation}
 \eqref{eq:rolling-constraint} 给出了轮系转角与前进位移之间的几何关系。偏航角不是平面模型中的独立广义坐标，其表达将在第 \ref{sec:state-space-model} 节通过运动学映射引入。
@@ -188,7 +190,7 @@
 
 系统总动能可写为
 \begin{equation}
-  T = T_w + T_l + T_b,
+  T = T_w + T_l + T_b
   \label{eq:kinetic-total}
 \end{equation}
 其中
@@ -244,7 +246,7 @@
   \end{bmatrix}
   \label{eq:generalized-force}
 \end{equation}
-式中，第一个分量为左右轮驱动转矩在前进方向上的等效广义力，第二、三项分别对应 VMC 作用下的虚拟腿轴向力与摆动虚拟转矩。机体俯仰自由度不直接受驱动，因此第四项为零。
+上式中，第一个分量为左右轮驱动转矩在前进方向上的等效广义力，第二、三项分别对应 VMC 作用下的虚拟腿轴向力与摆动虚拟转矩。机体俯仰自由度不直接受驱动，因此第四项为零。
 
 将\eqref{eq:kinetic-total} 至\eqref{eq:generalized-force} 代入\eqref{eq:lagrange-equation}，可得机器人平面等效模型的动力学方程
 \begin{equation}
