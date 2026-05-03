@@ -1,15 +1,15 @@
 \MakeAbstract{
     双轮足机器人兼具轮式高效移动与足式地形适应能力，但现有轮腿机器人普遍存在机构复杂、执行器数量多和控制计算负担较重等问题，不利于样机小型化与嵌入式实时控制。针对上述问题，本文以混合式双轮足机器人为研究对象，围绕机械结构设计、动力学建模与轻量级控制方法开展研究。
 
-    在结构设计方面，完成了整机自由度配置、关键尺寸参数与性能指标制定，设计了腿部闭环机构、跳跃系统、传动系统和移动系统，并对关键执行器进行了选型与校核。在建模与控制方面，基于虚功等效思想将单腿抽象为可伸缩虚拟杆，建立了平面等效运动学与动力学模型，推导了五连杆机构在虚拟模型控制（VMC）框架下由任务空间到关节空间的力矩映射关系。在此基础上，提出一种面向嵌入式实时实现的分层轻量级控制系统：采用线性二次型调节器（LQR）实现机器人平衡与速度跟踪，腿部任务空间采用 VMC 实现支撑与摆动调节，侧向稳定通过基于滚转角的腿长差补偿实现，执行层采用轻量级二次规划（QP）进行约束投影。
+    在结构设计方面，完成了整机自由度配置、关键尺寸参数与性能指标制定，设计了腿部闭环机构、跳跃系统、传动系统和移动系统，并对关键执行器进行了选型与校核。在建模与控制方面，基于虚功等效思想将单腿抽象为可伸缩虚拟杆，建立了平面等效运动学与动力学模型，推导了五连杆机构在虚拟模型控制（VMC）框架下由任务空间到关节空间的力矩映射关系。在此基础上，提出一种面向嵌入式实时实现的分层轻量级控制系统：采用线性二次型调节器（LQR）实现机器人平衡、速度跟踪和腿摆控制量分配，VMC 负责腿长方向支撑，侧向稳定通过基于滚转角的腿长差补偿实现，并通过任务空间到关节空间的映射生成腿部关节力矩。
 
-    仿真与样机实验围绕原地平衡、速度跟踪、抗扰恢复、上下坡与越障以及转向稳定等典型工况展开。结果表明，本文提出的混合式结构方案及分层轻量级控制方法能够较好满足双轮足机器人在多种场景下的稳定运动需求，验证了所建模型与控制策略的有效性及工程可实现性。
+    仿真与样机实验围绕原地平衡、速度跟踪、扰动恢复、腿长调节和滚转稳定等典型工况展开。结果表明，本文提出的混合式结构方案及分层轻量级控制方法能够较好满足双轮足机器人在多种场景下的稳定运动需求，验证了所建模型与控制策略的有效性及工程可实现性。
 }{双轮足机器人，混合式机构，运动学与动力学建模，分层轻量级控制，虚拟模型控制}
 
 \MakeAbstractEng{
     Wheeled-biped robots combine the efficiency of wheeled locomotion with the terrain adaptability of legged systems, but existing designs often suffer from structural complexity, actuator redundancy, and high computational burden. To support compact prototyping and embedded real-time control, this thesis studies a hybrid wheeled-biped robot from mechanical design, dynamic modeling, and lightweight control perspectives.
 
-    The robot architecture, key dimensions, performance indices, closed-chain legs, jumping subsystem, transmission system, and mobile subsystem are designed, with actuator selection and verification completed. Based on the virtual-work principle, each leg is simplified as a sagittal-plane telescopic virtual leg, and the equivalent kinematic and dynamic models and VMC torque mapping are derived. A layered lightweight controller is then developed: LQR handles balance and velocity tracking, VMC regulates leg support and swing, roll-angle-based leg-length compensation improves lateral stability, and a lightweight QP module projects control commands under constraints.
+    The robot architecture, key dimensions, performance indices, closed-chain legs, jumping subsystem, transmission system, and mobile subsystem are designed, with actuator selection and verification completed. Based on the virtual-work principle, each leg is simplified as a sagittal-plane telescopic virtual leg, and the equivalent kinematic and dynamic models and VMC torque mapping are derived. A layered lightweight controller is then developed: LQR handles balance, velocity tracking, and leg-swing torque allocation; VMC regulates leg-length support; and roll-angle-based leg-length compensation improves lateral stability through the task-space to joint-space torque mapping.
 
-    Simulations and prototype experiments cover standing balance, velocity tracking, disturbance recovery, slope and obstacle negotiation, and turning stabilization. The results verify the effectiveness and engineering feasibility of the proposed hybrid structure and layered lightweight control method.
+    Simulations and prototype experiments cover standing balance, velocity tracking, disturbance recovery, leg-length regulation, and roll stabilization. The results verify the effectiveness and engineering feasibility of the proposed hybrid structure and layered lightweight control method.
 }{wheeled-biped robot, hybrid mechanism, kinematic and dynamic modeling, layered lightweight control, virtual model control}
