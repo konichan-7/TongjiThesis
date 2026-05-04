@@ -59,19 +59,19 @@
 当腿部机构接近最大伸展姿态时，可估算足端最大高度为
 
 \begin{equation}
-  H_{\max} = AB + BC = 160 + 196 = 356\,\mathrm{mm}.
+  H_{\max} = AB + BC = 160 + 196 = 356\,\mathrm{mm}
 \end{equation}
 
 受机械限位和传动角限制，设定曲柄向上旋转的极限夹角约为水平以上 $30^\circ$，此时腿部最小收缩高度约为
 
 \begin{equation}
-  H_{\min} \approx 100\,\mathrm{mm}.
+  H_{\min} \approx 100\,\mathrm{mm}
 \end{equation}
 
 由此得到腿部有效伸缩行程为
 
 \begin{equation}
-  S_{\mathrm{eff}} = H_{\max} - H_{\min} \approx 256\,\mathrm{mm}.
+  S_{\mathrm{eff}} = H_{\max} - H_{\min} \approx 256\,\mathrm{mm}
 \end{equation}
 
 该行程大于\tabref{tab:design-targets}中的越障高度指标，也为落地缓冲和高度调节留出余量。由上述参数得到的腿部工作空间如\figref{fig:leg-workspace}所示，足端在竖直方向上的可达范围满足后续虚拟腿建模需要。
@@ -153,13 +153,13 @@
 \begin{equation}
   F_t = \frac{2 T_{\text{peak}}}{d}
   = \frac{2 \times 7}{0.04907}
-  \approx 285.3\,\mathrm{N}.
+  \approx 285.3\,\mathrm{N}
 \end{equation}
 
 主流 9 速自行车链条的最小破坏载荷通常可达到
 
 \begin{equation}
-  F_u \geq 8500\,\mathrm{N}.
+  F_u \geq 8500\,\mathrm{N}
 \end{equation}
 
 由此可得静强度安全系数
@@ -167,7 +167,7 @@
 \begin{equation}
   S = \frac{F_u}{F_t}
   = \frac{8500}{285.3}
-  \approx 29.79.
+  \approx 29.79
 \end{equation}
 
 即使考虑冲击载荷系数 $K_A \approx 1.5$，链条强度仍有余量。
@@ -198,13 +198,13 @@
   \omega = \frac{v_{\max}}{r}
   = \frac{2}{0.06}
   \approx 33.3\,\mathrm{rad/s}
-  \approx 318\,\mathrm{RPM}.
+  \approx 318\,\mathrm{RPM}
 \end{equation}
 
 若机器人在 $0.5\,\mathrm{s}$ 内由静止加速至 $2\,\mathrm{m/s}$，所需加速度为
 
 \begin{equation}
-  a = 4\,\mathrm{m/s^2}.
+  a = 4\,\mathrm{m/s^2}
 \end{equation}
 
 当整机质量取 $M = 5\,\mathrm{kg}$、滚动阻力系数取 $\mu = 0.05$ 时，总牵引力需求为
@@ -212,7 +212,7 @@
 \begin{equation}
   F_{\text{total}} = Ma + \mu Mg
   = 20 + 0.05 \times 5 \times 9.8
-  = 22.45\,\mathrm{N}.
+  = 22.45\,\mathrm{N}
 \end{equation}
 
 对应轮组总扭矩为
@@ -220,7 +220,7 @@
 \begin{equation}
   T_{\text{acc}} = F_{\text{total}} r
   = 22.45 \times 0.06
-  \approx 1.35\,\mathrm{N\cdot m}.
+  \approx 1.35\,\mathrm{N\cdot m}
 \end{equation}
 
 在爬坡工况下，若坡度取 $\alpha = 20^\circ$，重力沿坡面方向的分量为
@@ -228,7 +228,7 @@
 \begin{equation}
   F_{\text{climb}} = Mg \sin \alpha
   = 5 \times 9.8 \times 0.342
-  \approx 16.8\,\mathrm{N},
+  \approx 16.8\,\mathrm{N}
 \end{equation}
 
 对应爬坡扭矩为
@@ -236,7 +236,7 @@
 \begin{equation}
   T_{\text{climb}} = F_{\text{climb}} r
   = 16.8 \times 0.06
-  \approx 1.01\,\mathrm{N\cdot m}.
+  \approx 1.01\,\mathrm{N\cdot m}
 \end{equation}
 
 双轮驱动时，单轮连续扭矩需求约为 $0.7 \sim 1.0\,\mathrm{N\cdot m}$。考虑加速、坡面扰动和控制裕度后，选用额定扭矩为 $2.5\,\mathrm{N\cdot m}$ 的减速轮毂电机。
@@ -252,14 +252,14 @@
 假设机器人需要实现原地跳跃，目标腾空高度为 $H_{\text{jump}} = 0.3\,\mathrm{m}$。根据能量守恒，机器人离地瞬间速度满足
 
 \begin{equation}
-  \frac{1}{2} M v_{\text{takeoff}}^2 = M g H_{\text{jump}},
+  \frac{1}{2} M v_{\text{takeoff}}^2 = M g H_{\text{jump}}
 \end{equation}
 
 解得
 
 \begin{equation}
   v_{\text{takeoff}} = \sqrt{2 g H_{\text{jump}}}
-  \approx 2.42\,\mathrm{m/s}.
+  \approx 2.42\,\mathrm{m/s}
 \end{equation}
 
 若起跳阶段有效伸腿行程取 $h_{\text{acc}} = 0.15\,\mathrm{m}$，由动能定理可得地面对足端的平均反作用力
@@ -268,7 +268,7 @@
   F_{\text{ground}} =
   \frac{M g H_{\text{jump}}}{h_{\text{acc}}} + Mg
   = \frac{5 \times 9.8 \times 0.3}{0.15} + 49
-  = 147\,\mathrm{N}.
+  = 147\,\mathrm{N}
 \end{equation}
 
 根据虚功原理，足端力与关节力矩满足 $\boldsymbol{\tau} = \boldsymbol{J}^{\mathsf{T}}\boldsymbol{F}$。在典型半蹲姿态下，设等效连杆长度为 $L_{\text{link}} \approx 0.15\,\mathrm{m}$，有效力臂系数取 0.7，则峰值关节力矩可估算为
@@ -277,7 +277,7 @@
   T_{\text{peak}} \approx
   F_{\text{ground}} L_{\text{link}} \times 0.7
   \approx 147 \times 0.15 \times 0.7
-  \approx 15.4\,\mathrm{N\cdot m}.
+  \approx 15.4\,\mathrm{N\cdot m}
 \end{equation}
 
 上述估算按较保守的工况取值。实际样机为双腿协同支撑，且每条腿由两个主动关节电机和闭环连杆机构共同承担负载，单电机峰值需求会低于该估算。综合质量、体积和控制接口，腿部关节驱动器选用额定扭矩 $3\,\mathrm{N\cdot m}$、峰值扭矩 $7\,\mathrm{N\cdot m}$ 的无刷减速电机。该电机支持 MIT、速度和位置控制模式，满足站立平衡和腿部快速调节需求。
@@ -313,7 +313,7 @@
   T_{\text{rated}} =
   Mg L_{\text{link}} \sin 45^\circ
   \approx 5 \times 9.8 \times 0.15 \times 0.707
-  \approx 5.2\,\mathrm{N\cdot m}.
+  \approx 5.2\,\mathrm{N\cdot m}
 \end{equation}
 
 双腿支撑时，单腿持续负载约减半，即约为 $2.6\,\mathrm{N\cdot m}$。所选电机额定扭矩为 $3\,\mathrm{N\cdot m}$，可覆盖该需求，并为姿态调节和小扰动恢复留出余量。
