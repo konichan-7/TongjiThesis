@@ -1,15 +1,13 @@
 \MakeAbstract{
-    双轮足机器人兼具轮式高效移动与足式地形适应能力，但现有轮腿机器人普遍存在机构复杂、执行器数量多和控制计算负担较重等问题，不利于样机小型化与嵌入式实时控制。针对上述问题，本文以混合式双轮足机器人为研究对象，围绕机械结构设计、动力学建模与轻量级控制方法开展研究。
+    双轮足机器人兼具轮式移动效率和腿式机构地形适应能力，但现有轮腿平台往往存在机械结构复杂、执行器数量多和控制计算量较大的问题，限制了小型样机的集成和嵌入式实时控制。针对上述问题，本文以混合式双轮足机器人为研究对象，围绕结构设计、动力学建模和轻量级控制方法开展研究，目标是在较低控制复杂度下实现稳定平衡、速度调节和腿长支撑。
 
-    在结构设计方面，完成了整机自由度配置、关键尺寸参数与性能指标制定，设计了腿部闭环机构、跳跃系统、传动系统和移动系统，并对关键执行器进行了选型与校核。在建模与控制方面，基于虚功等效思想将单腿抽象为可伸缩虚拟杆，建立了平面等效运动学与动力学模型，推导了五连杆机构在虚拟模型控制（VMC）框架下由任务空间到关节空间的力矩映射关系。在此基础上，提出一种面向嵌入式实时实现的分层轻量级控制系统：采用线性二次型调节器（LQR）实现机器人平衡、速度跟踪和腿摆控制量分配，VMC 负责腿长方向支撑，侧向稳定通过基于滚转角的腿长差补偿实现，并通过任务空间到关节空间的映射生成腿部关节力矩。
+    在机械结构方面，本文完成了机器人总体构型、闭环腿部机构、躯干承载结构、链传动系统和足端轮组系统设计，并对腿部关节电机和轮毂电机进行了选型与校核。为支撑控制器设计，本文将闭环腿部机构等效为可伸缩虚拟腿，建立了机器人平面等效运动学与动力学模型，推导了面向 LQR 控制器的线性状态空间表达；同时，证明了混合式闭环腿部机构与标准五连杆机构在运动学上的等效关系，并建立了虚拟腿任务空间到关节空间的力矩映射。
 
-    仿真与样机实验围绕原地平衡、速度跟踪、扰动恢复、腿长调节和滚转稳定等典型工况展开。结果表明，本文提出的混合式结构方案及分层轻量级控制方法能够较好满足双轮足机器人在多种场景下的稳定运动需求，验证了所建模型与控制策略的有效性及工程可实现性。
-}{双轮足机器人，混合式机构，运动学与动力学建模，分层轻量级控制，虚拟模型控制}
+    在控制方法方面，本文提出了一种面向嵌入式实时实现的 LQR-VMC 分层控制系统。该系统采用 LQR 完成机体平衡、速度跟踪和腿摆控制量分配，采用 VMC 实现腿长方向支撑，并通过基于滚转角的腿长差修正改善侧向姿态。仿真和样机实验围绕原地平衡、速度跟踪、扰动恢复、腿长调节和滚转稳定等工况展开。结果表明，所提出的混合式机械结构和分层轻量级控制方法能够在物理样机上实现稳定运行，验证了本文方法的有效性和工程可实现性。
+}{双轮足机器人，混合式机构，运动学与动力学建模，LQR-VMC，分层轻量级控制}
 
 \MakeAbstractEng{
-    Wheeled-biped robots combine the efficiency of wheeled locomotion with the terrain adaptability of legged systems, but existing designs often suffer from structural complexity, actuator redundancy, and high computational burden. To support compact prototyping and embedded real-time control, this thesis studies a hybrid wheeled-biped robot from mechanical design, dynamic modeling, and lightweight control perspectives.
+    Wheeled-biped robots combine efficient wheeled locomotion with the terrain adaptability of legged mechanisms, but many existing platforms rely on complex structures, redundant actuators, and computationally demanding controllers. To support compact prototyping and embedded real-time control, this thesis studies a hybrid wheeled-biped robot from the perspectives of mechanical design, dynamic modeling, and lightweight control.
 
-    The robot architecture, key dimensions, performance indices, closed-chain legs, jumping subsystem, transmission system, and mobile subsystem are designed, with actuator selection and verification completed. Based on the virtual-work principle, each leg is simplified as a sagittal-plane telescopic virtual leg, and the equivalent kinematic and dynamic models and VMC torque mapping are derived. A layered lightweight controller is then developed: LQR handles balance, velocity tracking, and leg-swing torque allocation; VMC regulates leg-length support; and roll-angle-based leg-length compensation improves lateral stability through the task-space to joint-space torque mapping.
-
-    Simulations and prototype experiments cover standing balance, velocity tracking, disturbance recovery, leg-length regulation, and roll stabilization. The results verify the effectiveness and engineering feasibility of the proposed hybrid structure and layered lightweight control method.
-}{wheeled-biped robot, hybrid mechanism, kinematic and dynamic modeling, layered lightweight control, virtual model control}
+    The robot configuration, closed-chain leg mechanism, body structure, chain transmission, and wheel module are designed, with key actuators selected and verified. For control-oriented modeling, the closed-chain leg is simplified as a telescopic virtual leg; the planar kinematic and dynamic models, the LQR state-space model, and the task-space-to-joint-space torque mapping for VMC are derived. A layered LQR-VMC controller is then developed: LQR handles balance, velocity tracking, and leg-swing torque allocation; VMC regulates leg-length support; and roll-angle-based leg-length correction improves lateral posture. Simulations and prototype experiments on standing balance, velocity tracking, disturbance recovery, leg-length regulation, and roll stabilization show that the proposed mechanism and controller enable stable operation on the physical prototype, verifying their effectiveness and engineering feasibility.
+}{wheeled-biped robot, hybrid mechanism, dynamic modeling, LQR-VMC, lightweight control}
