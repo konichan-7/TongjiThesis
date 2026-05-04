@@ -94,20 +94,14 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.55\textwidth]{figures/ch05/standup.jpg}
+  \includegraphics[width=0.5\textwidth]{figures/ch05/standup.jpg}
   \caption{原地起立并平衡过程}
   \label{fig:balance-experiment-scene}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \fbox{%
-    \begin{minipage}[c][0.42\textwidth][c]{0.92\textwidth}
-      \centering
-      待插入原地平衡实验曲线\\[0.5em]
-      建议曲线：机体俯仰角、前进速度、左右腿长和轮端力矩
-    \end{minipage}
-  }
+  \includegraphics[width=0.8\textwidth]{figures/ch05/standup.png}
   \caption{原地平衡实验响应曲线}
   \label{fig:balance-experiment-response}
 \end{figure}
@@ -129,13 +123,7 @@
 
 \begin{figure}[H]
   \centering
-  \fbox{%
-    \begin{minipage}[c][0.42\textwidth][c]{0.92\textwidth}
-      \centering
-      待插入速度跟踪实验曲线\\[0.5em]
-      建议曲线：期望速度、实际速度、机体俯仰角和轮端力矩
-    \end{minipage}
-  }
+  \includegraphics[width=0.8\textwidth]{figures/ch05/ds.png}
   \caption{速度跟踪实验响应曲线}
   \label{fig:velocity-experiment-response}
 \end{figure}
@@ -152,20 +140,14 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.55\textwidth]{figures/ch05/roll.jpg}
+  \includegraphics[width=0.45\textwidth]{figures/ch05/roll.jpg}
   \caption{滚转补偿机器人位姿表现}
   \label{fig:roll-experiment-scene}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \fbox{%
-    \begin{minipage}[c][0.42\textwidth][c]{0.92\textwidth}
-      \centering
-      待插入滚转补偿对比曲线\\[0.5em]
-      建议曲线：补偿开启/关闭时的滚转角、左右腿长和腿长差
-    \end{minipage}
-  }
+  \includegraphics[width=0.8\textwidth]{figures/ch05/roll_compensation.png}
   \caption{滚转补偿前后实验响应对比}
   \label{fig:roll-experiment-response}
 \end{figure}
@@ -183,6 +165,12 @@
   \includegraphics[width=0.55\textwidth]{figures/ch05/leg.jpg}
   \caption{腿长控制机器人位姿表现}
   \label{fig:leg-experiment-scene}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/ch05/leg_control.png}  \caption{腿长控制实验响应对比}
+  \label{fig:leg-experiment-response}
 \end{figure}
 
 分析腿长控制结果时，首先检查左右腿实际长度是否能够跟随参考腿长变化，且两侧响应是否基本一致。其次观察腿长变化过程中机体俯仰角是否保持在小范围内，避免高度调节破坏倒立摆平衡。最后结合腿部关节力矩判断虚拟弹簧阻尼参数是否合适：若腿长响应过慢，说明刚度或阻尼偏小；若腿长曲线出现明显振荡，则需要降低刚度或提高阻尼。
