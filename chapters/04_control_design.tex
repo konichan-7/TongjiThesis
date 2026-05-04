@@ -55,7 +55,7 @@
   \begin{bmatrix}
     s & \dot{s} & \phi & \dot{\phi} & \theta_{ll} & \dot{\theta}_{ll} &
     \theta_{lr} & \dot{\theta}_{lr} & \theta_b & \dot{\theta}_b
-  \end{bmatrix}^{\mathsf{T}}.
+  \end{bmatrix}^{\mathsf{T}}
   \label{eq:full-state-vector}
 \end{equation}
 其中，$s$ 与 $\phi$ 由第三章给出的轮系运动学关系计算得到。相较于直接使用广义坐标，\eqref{eq:full-state-vector} 中的状态量具有更清晰的物理意义，更便于从“平衡、转向、腿摆、俯仰”四类目标出发进行权重设计和实验分析。
@@ -64,7 +64,7 @@
 
 选取机器人静态直立工况作为平衡工作点，对第三章推导得到的非线性动力学方程进行小角度线性化，可得广义动力学形式
 \begin{equation}
-  \boldsymbol{M}\ddot{\boldsymbol{q}} + \boldsymbol{K}\boldsymbol{q} = \boldsymbol{E}\boldsymbol{u},
+  \boldsymbol{M}\ddot{\boldsymbol{q}} + \boldsymbol{K}\boldsymbol{q} = \boldsymbol{E}\boldsymbol{u}
   \label{eq:linearized-generalized-dynamics}
 \end{equation}
 其中，$\boldsymbol{M}$ 为平衡点处的等效惯性矩阵，$\boldsymbol{K}$ 为线性化后的重力与耦合项矩阵，$\boldsymbol{E}$ 为输入分配矩阵。由 $\boldsymbol{M}$ 的非奇异性，可将上式改写为显式加速度形式
@@ -117,7 +117,7 @@
     \delta \boldsymbol{x}^{\mathsf{T}}\boldsymbol{Q}\,\delta \boldsymbol{x}
     +
     \delta \boldsymbol{u}^{\mathsf{T}}\boldsymbol{R}\,\delta \boldsymbol{u}
-  \right)\dd t,
+  \right)\dd t
   \label{eq:lqr-cost}
 \end{equation}
 其中，$\boldsymbol{Q} \succeq 0$ 为状态加权矩阵，$\boldsymbol{R} \succ 0$ 为控制加权矩阵。$\boldsymbol{Q}$ 用于度量前进位移、偏航角、腿摆角和机体俯仰角等状态的偏差程度；$\boldsymbol{R}$ 用于约束轮电机与腿部驱动器的输出幅值，避免过大的控制输入导致执行器饱和和结构冲击。在实际设计中，可适当增大 $\theta_b$、$\dot{\theta}_b$ 和 $\dot{s}$ 的权重，以提高姿态稳定与速度恢复能力。
@@ -128,7 +128,7 @@
   =
   \boldsymbol{A}\delta \boldsymbol{x}
   +
-  \boldsymbol{B}\delta \boldsymbol{u},
+  \boldsymbol{B}\delta \boldsymbol{u}
   \label{eq:lqr-system}
 \end{equation}
 若存在正定矩阵 $\boldsymbol{P}$ 满足连续时间代数 Riccati 方程
@@ -141,17 +141,17 @@
   +
   \boldsymbol{Q}
   =
-  \boldsymbol{0},
+  \boldsymbol{0}
   \label{eq:riccati}
 \end{equation}
 则最优状态反馈律为
 \begin{equation}
   \delta \boldsymbol{u}
   =
-  -\boldsymbol{K}\delta \boldsymbol{x},
+  -\boldsymbol{K}\delta \boldsymbol{x}
   \qquad
   \boldsymbol{K} =
-  \boldsymbol{R}^{-1}\boldsymbol{B}^{\mathsf{T}}\boldsymbol{P}.
+  \boldsymbol{R}^{-1}\boldsymbol{B}^{\mathsf{T}}\boldsymbol{P}
   \label{eq:lqr-law}
 \end{equation}
 因此主控制器输出可写为
@@ -166,7 +166,7 @@
   \boldsymbol{K}
   \left(
     \boldsymbol{x} - \boldsymbol{x}_d
-  \right),
+  \right)
   \label{eq:lqr-output}
 \end{equation}
 其中，$\boldsymbol{x}_d$ 为期望状态向量。静态站立任务中通常取 $\boldsymbol{x}_d = \boldsymbol{0}$；速度跟踪或转向任务中，则可通过设置 $\dot{s}_d$、$\phi_d$ 等参考量生成相应的平衡工作点。
@@ -183,8 +183,8 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   \boldsymbol{x}_{v,i} =
   \begin{bmatrix}
     l_i & \theta_{l,i}
-  \end{bmatrix}^{\mathsf{T}},
-  \qquad i \in \{l,r\},
+  \end{bmatrix}^{\mathsf{T}}
+  \qquad i \in \{l,r\}
   \label{eq:leg-task-state}
 \end{equation}
 其中，$l_i$ 表示第 $i$ 条腿的虚拟腿长，$\theta_{l,i}$ 表示其虚拟腿摆角。针对腿长方向，构造虚拟弹簧阻尼器，并引入重力前馈补偿，其轴向虚拟力为
@@ -195,16 +195,16 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   +
   D_l (\dot{l}_{d,i} - \dot{l}_i)
   +
-  \frac{1}{2} mg \cos\theta_{l,i},
-  \qquad i \in \{l,r\}.
+  \frac{1}{2} mg \cos\theta_{l,i}
+  \qquad i \in \{l,r\}
   \label{eq:leg-force-law}
 \end{equation}
 其中，$m$ 为机器人的部分或整体等效质量，$\frac{1}{2} m g \cos\theta_{l,i}$ 为在此摆角下单腿分担的重力前馈项。\eqref{eq:leg-force-law} 使腿部在支撑阶段表现为具有等效刚度和阻尼的虚拟支撑单元，从而实现机体高度维持、落地缓冲和腿长振荡抑制。与直接进行关节位置控制相比，这种写法更符合机器人与地面发生力学作用时的控制需求，也更便于在不同工况下通过少量参数完成行为切换。
 
 在腿摆方向，本文不再额外构造 PD 修正项，而是直接采用 LQR 主控制器输出的对应腿部控制量。记任务空间中的腿摆虚拟转矩为 $T_{\theta,i}^{\ast}$，则有
 \begin{equation}
-  T_{\theta,i}^{\ast} = T_{bl,i}^{\ast},
-  \qquad i \in \{l,r\}.
+  T_{\theta,i}^{\ast} = T_{bl,i}^{\ast}
+  \qquad i \in \{l,r\}
   \label{eq:leg-swing-lqr-input}
 \end{equation}
 其中，$T_{bl,i}^{\ast}$ 来自\eqref{eq:lqr-output}。这样处理可以避免在腿摆方向重复引入局部闭环，使腿摆控制量与线性化平衡模型中的输入保持一致。
@@ -216,8 +216,8 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   \begin{bmatrix}
     F_{l,i}^{\ast} \\
     T_{\theta,i}^{\ast}
-  \end{bmatrix},
-  \qquad i \in \{l,r\}.
+  \end{bmatrix}
+  \qquad i \in \{l,r\}
   \label{eq:task-space-input}
 \end{equation}
 
@@ -227,8 +227,8 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
 \begin{equation}
   \boldsymbol{\tau}_{i}^{\ast}
   =
-  \boldsymbol{J}_{v,i}^{\mathsf{T}}\boldsymbol{F}_{v,i}^{\ast},
-  \qquad i \in \{l,r\}.
+  \boldsymbol{J}_{v,i}^{\mathsf{T}}\boldsymbol{F}_{v,i}^{\ast}
+  \qquad i \in \{l,r\}
   \label{eq:leg-joint-torque}
 \end{equation}
 其中，$\boldsymbol{\tau}_{i}^{\ast}$ 为第 $i$ 条腿对应主动关节的驱动力矩向量。\eqref{eq:leg-joint-torque} 将“任务空间中的腿长支撑力与 LQR 腿摆控制量”转换为“关节空间中的可执行力矩命令”，使闭环五连杆机构仍可在虚拟腿描述下进行直观控制。因此，本文并不在第四章重复推导闭环机构运动学细节，而是直接调用第三章建立的映射关系，以减少章节间重复。
@@ -247,7 +247,7 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
     (l_r-l_l)\cos\gamma + 2b\sin\gamma
   }{
     (l_l-l_r)\sin\gamma + 2b\cos\gamma
-  }.
+  }
   \label{eq:roll-delta}
 \end{equation}
 
@@ -260,9 +260,9 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
 \end{equation}
 若希望机体在该等效坡面上保持水平，则左右腿的期望腿长可写为
 \begin{equation}
-  l_{d,l}^{\mathrm{roll}} = h,
+  l_{d,l}^{\mathrm{roll}} = h
   \qquad
-  l_{d,r}^{\mathrm{roll}} = h - 2b\tan \delta_{\mathrm{roll}}.
+  l_{d,r}^{\mathrm{roll}} = h - 2b\tan \delta_{\mathrm{roll}}
   \label{eq:roll-leg-target}
 \end{equation}
 因此，由滚转角引起的期望腿长差为
@@ -271,15 +271,15 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   =
   l_{d,l}^{\mathrm{roll}} - l_{d,r}^{\mathrm{roll}}
   =
-  2b\tan \delta_{\mathrm{roll}}.
+  2b\tan \delta_{\mathrm{roll}}
   \label{eq:roll-leg-diff}
 \end{equation}
 
 \eqref{eq:roll-leg-diff} 给出了该补偿方法的核心结果，即先由当前滚转角和左右腿几何关系求出等效坡角，再将其转化为左右腿的期望腿长差。考虑到腿长通道中已经存在基准腿长控制，为避免直接替换参考量引起指令突变，本文将腿长差的一半以相反符号叠加到左右腿基准腿长上，即
 \begin{equation}
-  l_{d,l} = l_d + \frac{1}{2}\Delta l_{\mathrm{roll}},
+  l_{d,l} = l_d + \frac{1}{2}\Delta l_{\mathrm{roll}}
   \qquad
-  l_{d,r} = l_d - \frac{1}{2}\Delta l_{\mathrm{roll}},
+  l_{d,r} = l_d - \frac{1}{2}\Delta l_{\mathrm{roll}}
   \label{eq:roll-leg-superimpose}
 \end{equation}
 其中，$l_d$ 为对称支撑工况下的公共基准腿长。随后将 $l_{d,l}$ 和 $l_{d,r}$ 代入\eqref{eq:leg-force-law} 对应的左右腿腿长控制器，即可得到滚转补偿后的腿长控制量。
@@ -300,12 +300,12 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   +
   \dot{\theta}_l
   +
-  \dot{\theta}_b .
+  \dot{\theta}_b 
   \label{eq:wheel-ground-angular-velocity}
 \end{equation}
 由轮半径 $R_w$ 可得到轮轴接地点对应的平动速度
 \begin{equation}
-  \dot{x}_w = R_w \omega_w .
+  \dot{x}_w = R_w \omega_w 
   \label{eq:wheel-velocity-est}
 \end{equation}
 
@@ -317,7 +317,7 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   +
   l \dot{\theta}_l \cos\theta_l
   +
-  \dot{l}\sin\theta_l .
+  \dot{l}\sin\theta_l 
   \label{eq:body-velocity-kinematic}
 \end{equation}
 将\eqref{eq:wheel-velocity-est} 代入上式，即可得到由编码器和姿态角速度解算出的机体前进速度观测量。实际实现中，左右两侧轮组分别计算得到 $\dot{x}_{b,l}$ 和 $\dot{x}_{b,r}$，直线运动时取二者平均作为前进速度观测值
@@ -329,7 +329,7 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
     \dot{x}_{b,l}
     +
     \dot{x}_{b,r}
-  \right).
+  \right)
   \label{eq:encoder-forward-velocity}
 \end{equation}
 同时，左右轮速度差可用于估计偏航角速度，并结合第三章轮系运动学关系得到偏航角 $\phi$ 及其变化率。
@@ -342,7 +342,7 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   =
   \begin{bmatrix}
     v & a
-  \end{bmatrix}^{\mathsf{T}},
+  \end{bmatrix}^{\mathsf{T}}
   \label{eq:observer-state}
 \end{equation}
 其中，$v$ 为机体前进速度，$a$ 为机体前向加速度。KF 的预测模型采用匀加速度离散模型，可写为
@@ -351,9 +351,9 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   =
   \boldsymbol{F}_k \boldsymbol{x}_{o,k}
   +
-  \boldsymbol{\Gamma}_k w_k,
+  \boldsymbol{\Gamma}_k w_k
   \qquad
-  w_k \sim \mathcal{N}(0,Q_k),
+  w_k \sim \mathcal{N}(0,Q_k)
   \label{eq:observer-process}
 \end{equation}
 其中
@@ -363,14 +363,14 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   \begin{bmatrix}
     1 & \Delta t \\
     0 & 1
-  \end{bmatrix},
+  \end{bmatrix}
   \qquad
   \boldsymbol{\Gamma}_k
   =
   \begin{bmatrix}
     \frac{1}{2}\Delta t^2 \\
     \Delta t
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:observer-matrix}
 \end{equation}
 
@@ -385,14 +385,14 @@ KF 的观测向量由轮速运动学解算得到的速度 $\dot{s}_{\mathrm{enc}
   =
   \boldsymbol{H}_k \boldsymbol{x}_{o,k}
   +
-  \boldsymbol{v}_k,
+  \boldsymbol{v}_k
   \qquad
   \boldsymbol{H}_k
   =
   \begin{bmatrix}
     1 & 0 \\
     0 & 1
-  \end{bmatrix},
+  \end{bmatrix}
   \label{eq:observer-measurement}
 \end{equation}
 其中，$\boldsymbol{v}_k \sim \mathcal{N}(\boldsymbol{0},\boldsymbol{R}_k)$ 为测量噪声，测量噪声协方差可取为
@@ -402,7 +402,7 @@ KF 的观测向量由轮速运动学解算得到的速度 $\dot{s}_{\mathrm{enc}
   \begin{bmatrix}
     \sigma_v^2 & 0 \\
     0 & \sigma_a^2
-  \end{bmatrix}.
+  \end{bmatrix}
   \label{eq:observer-noise}
 \end{equation}
 这里，$\sigma_v^2$ 反映轮速解算结果的可信度，$\sigma_a^2$ 反映惯性加速度测量的噪声水平。KF 根据过程噪声协方差 $Q_k$ 和测量噪声协方差 $\boldsymbol{R}_k$ 在预测值与观测值之间分配权重。当地面接触较平稳时，可适当提高轮速观测的权重；当机器人经过凸起或存在打滑风险时，可增大 $\sigma_v^2$，使估计结果更多依赖惯性加速度预测，从而降低速度反馈中的瞬时尖峰。
@@ -416,7 +416,7 @@ KF 的观测向量由轮速运动学解算得到的速度 $\dot{s}_{\mathrm{enc}
     \hat{\theta}_{l,l} & \hat{\dot{\theta}}_{l,l} &
     \hat{\theta}_{l,r} & \hat{\dot{\theta}}_{l,r} &
     \hat{\theta}_b & \hat{\dot{\theta}}_b
-  \end{bmatrix}^{\mathsf{T}}.
+  \end{bmatrix}^{\mathsf{T}}
   \label{eq:estimated-controller-state}
 \end{equation}
 该 KF 估计方式将编码器的快速响应与惯性测量的抗突变能力结合起来，能够为 LQR-VMC 控制器提供更平滑的速度反馈，并降低复杂地面接触对平衡控制的影响。
