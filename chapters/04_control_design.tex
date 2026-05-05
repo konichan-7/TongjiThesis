@@ -178,6 +178,13 @@
 LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不直接负责腿长调节、缓冲支撑和越障时的局部运动组织。
 考虑到闭环五连杆机构在关节空间中耦合较强，而虚拟腿长度和虚拟腿摆角具有更明确的物理含义，本文在腿部控制中仍采用任务空间描述：腿长方向由 VMC 构造轴向支撑力，腿摆方向直接沿用 LQR 输出的控制量。
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/ch04/vmc.png}
+  \caption{VMC 虚拟控制示意图}
+  \label{fig:vmc-response}
+\end{figure}
+
 对于左、右腿，分别定义任务空间状态为
 \begin{equation}
   \boldsymbol{x}_{v,i} =
