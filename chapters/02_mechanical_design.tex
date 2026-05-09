@@ -41,7 +41,7 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.52\textwidth]{figures/ch02/image1.png}
+  \includegraphics[width=0.6\textwidth]{figures/ch02/image1.png}
   \caption{腿部连杆机构简图}
   \label{fig:leg-linkage}
 \end{figure}
@@ -56,20 +56,15 @@
   \item 主支撑杆长度：$GI = 160\,\mathrm{mm}$，该尺寸用于形成主要承载支链。
 \end{itemize}
 
-当腿部机构接近最大伸展姿态时，可估算足端最大高度为
-
+当腿部机构接近最大伸展姿态时，可估算足端最大高度为：
 \begin{equation}
   H_{\max} = AB + BC = 160 + 196 = 356\,\mathrm{mm}
 \end{equation}
-
 受机械限位和传动角限制，设定曲柄向上旋转的极限夹角约为水平以上 $30^\circ$，此时腿部最小收缩高度约为
-
 \begin{equation}
   H_{\min} \approx 100\,\mathrm{mm}
 \end{equation}
-
-由此得到腿部有效伸缩行程为
-
+由此得到腿部有效伸缩行程为：
 \begin{equation}
   S_{\mathrm{eff}} = H_{\max} - H_{\min} \approx 256\,\mathrm{mm}
 \end{equation}
@@ -89,16 +84,13 @@
   \centering
   \caption{腿部连杆参数汇总}\label{tab:link-lengths}
   \renewcommand{\arraystretch}{1.2}
-  \begin{tabular}{cc}
+  \begin{tabular}{cccc}
     \toprule
-    连杆代号 & 长度/m \\
+    连杆代号 & 长度/m & 连杆代号 & 长度/m \\
     \midrule
-    AF & 0.08640 \\
-    FG & 0.10584 \\
-    GI & 0.16000 \\
-    IJ & 0.07360 \\
-    JC & 0.25016 \\
-    AB & 0.16000 \\
+    AF & 0.08640 & FG & 0.10584 \\
+    GI & 0.16000 & IJ & 0.07360 \\
+    JC & 0.25016 & AB & 0.16000 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -116,6 +108,7 @@
 
 左右髋关节安装结构与躯干框架一体设计。两侧髋部之间采用镂空板材连接，形成近似箱式的承载结构；躯干上方安装 3D 打印电池架，便于固定和拆装电池；主控板、电源模块和驱动器布置在躯干内部或侧面安装区域。这样可以让腿部驱动电机、电池和控制硬件尽量靠近整机中心，减少不必要的偏置载荷。
 
+主要承载板件优先采用碳纤维板材或 7075/6061 铝合金加工。碳纤维板材比刚度较高，适合用于侧板和连接板；铝合金更适合轴承座、电机座等需要较高加工精度的部位。电池架、线束固定件等非主要受力部件采用 3D 打印件，便于快速修改结构。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{figures/ch02/image4.png}
@@ -123,7 +116,6 @@
   \label{fig:body-structure}
 \end{figure}
 
-主要承载板件优先采用碳纤维板材或 7075/6061 铝合金加工。碳纤维板材比刚度较高，适合用于侧板和连接板；铝合金更适合轴承座、电机座等需要较高加工精度的部位。电池架、线束固定件等非主要受力部件采用 3D 打印件，便于快速修改结构。
 
 惯性测量单元尽量安装在靠近机体几何中心的位置，以减小局部振动和结构弹性对姿态测量的影响。电池和驱动器也尽量对称布置，避免左右腿支撑力出现明显静态偏差。
 
@@ -148,30 +140,23 @@
 
 腿部力矩传递采用 9 速自行车链条。与同步带相比，滚子链属于啮合传动，平均传动比更稳定，抗拉强度也更高；与常见工业链条相比，自行车链条宽度较小，有利于控制腿部横向尺寸。
 
-在跳跃落地或快速伸腿工况下，链条会承受较大的瞬时拉力。以腿部电机说明书给出的峰值扭矩 $T_{\text{peak}} = 7\,\mathrm{N\cdot m}$、链轮等效直径 $d = 0.04907\,\mathrm{m}$ 估算，有效圆周力为
-
+在跳跃落地或快速伸腿工况下，链条会承受较大的瞬时拉力。以腿部电机说明书给出的峰值扭矩 $T_{\text{peak}} = 7\,\mathrm{N\cdot m}$、链轮等效直径 $d = 0.04907\,\mathrm{m}$ 估算，有效圆周力为：
 \begin{equation}
   F_t = \frac{2 T_{\text{peak}}}{d}
   = \frac{2 \times 7}{0.04907}
   \approx 285.3\,\mathrm{N}
 \end{equation}
-
 主流 9 速自行车链条的最小破坏载荷通常可达到
-
 \begin{equation}
   F_u \geq 8500\,\mathrm{N}
 \end{equation}
-
 由此可得静强度安全系数
-
 \begin{equation}
   S = \frac{F_u}{F_t}
   = \frac{8500}{285.3}
   \approx 29.79
 \end{equation}
-
 即使考虑冲击载荷系数 $K_A \approx 1.5$，链条强度仍有余量。
-
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/ch02/image6.png}
@@ -193,52 +178,40 @@
 \end{figure}
 
 设轮子半径为 $r = 0.06\,\mathrm{m}$，根据最大移动速度指标 $v_{\max} \geq 2\,\mathrm{m/s}$，轮组所需角速度为
-
 \begin{equation}
   \omega = \frac{v_{\max}}{r}
   = \frac{2}{0.06}
   \approx 33.3\,\mathrm{rad/s}
   \approx 318\,\mathrm{RPM}
 \end{equation}
-
 若机器人在 $0.5\,\mathrm{s}$ 内由静止加速至 $2\,\mathrm{m/s}$，所需加速度为
-
 \begin{equation}
   a = 4\,\mathrm{m/s^2}
 \end{equation}
-
 当整机质量取 $M = 5\,\mathrm{kg}$、滚动阻力系数取 $\mu = 0.05$ 时，总牵引力需求为
-
 \begin{equation}
   F_{\text{total}} = Ma + \mu Mg
   = 20 + 0.05 \times 5 \times 9.8
   = 22.45\,\mathrm{N}
 \end{equation}
-
 对应轮组总扭矩为
-
 \begin{equation}
   T_{\text{acc}} = F_{\text{total}} r
   = 22.45 \times 0.06
   \approx 1.35\,\mathrm{N\cdot m}
 \end{equation}
-
 在爬坡工况下，若坡度取 $\alpha = 20^\circ$，重力沿坡面方向的分量为
-
 \begin{equation}
   F_{\text{climb}} = Mg \sin \alpha
   = 5 \times 9.8 \times 0.342
   \approx 16.8\,\mathrm{N}
 \end{equation}
-
 对应爬坡扭矩为
-
 \begin{equation}
   T_{\text{climb}} = F_{\text{climb}} r
   = 16.8 \times 0.06
   \approx 1.01\,\mathrm{N\cdot m}
 \end{equation}
-
 双轮驱动时，单轮连续扭矩需求约为 $0.7 \sim 1.0\,\mathrm{N\cdot m}$。考虑加速、坡面扰动和控制裕度后，选用额定扭矩为 $2.5\,\mathrm{N\cdot m}$ 的减速轮毂电机。
 
 \section{电机选型与校核}
@@ -250,36 +223,28 @@
 腿部关节电机按跳跃起跳、落地缓冲和单腿支撑等工况估算。下文用跳跃起跳估算峰值扭矩，用半蹲支撑估算额定扭矩。
 
 假设机器人需要实现原地跳跃，目标腾空高度为 $H_{\text{jump}} = 0.3\,\mathrm{m}$。根据能量守恒，机器人离地瞬间速度满足
-
 \begin{equation}
   \frac{1}{2} M v_{\text{takeoff}}^2 = M g H_{\text{jump}}
 \end{equation}
-
 解得
-
 \begin{equation}
   v_{\text{takeoff}} = \sqrt{2 g H_{\text{jump}}}
   \approx 2.42\,\mathrm{m/s}
 \end{equation}
-
 若起跳阶段有效伸腿行程取 $h_{\text{acc}} = 0.15\,\mathrm{m}$，由动能定理可得地面对足端的平均反作用力
-
 \begin{equation}
   F_{\text{ground}} =
   \frac{M g H_{\text{jump}}}{h_{\text{acc}}} + Mg
   = \frac{5 \times 9.8 \times 0.3}{0.15} + 49
   = 147\,\mathrm{N}
 \end{equation}
-
 根据虚功原理，足端力与关节力矩满足 $\boldsymbol{\tau} = \boldsymbol{J}^{\mathsf{T}}\boldsymbol{F}$。在典型半蹲姿态下，设等效连杆长度为 $L_{\text{link}} \approx 0.15\,\mathrm{m}$，有效力臂系数取 0.7，则峰值关节力矩可估算为
-
 \begin{equation}
   T_{\text{peak}} \approx
   F_{\text{ground}} L_{\text{link}} \times 0.7
   \approx 147 \times 0.15 \times 0.7
   \approx 15.4\,\mathrm{N\cdot m}
 \end{equation}
-
 上述估算按较保守的工况取值。实际样机为双腿协同支撑，且每条腿由两个主动关节电机和闭环连杆机构共同承担负载，单电机峰值需求会低于该估算。综合质量、体积和控制接口，腿部关节驱动器选用额定扭矩 $3\,\mathrm{N\cdot m}$、峰值扭矩 $7\,\mathrm{N\cdot m}$ 的无刷减速电机。该电机支持 MIT、速度和位置控制模式，满足站立平衡和腿部快速调节需求。
 
 \begin{figure}[H]
@@ -293,31 +258,25 @@
   \centering
   \caption{腿部关节驱动电机关键参数}
   \label{tab:leg-motor-parameters}
-  \begin{tabular}{lcc}
+  \begin{tabular}{lcclcc}
     \toprule
-    参数 & 数值 & 说明 \\
+    参数 & 数值 & 说明 & 参数 & 数值 & 说明\\
     \midrule
-    额定扭矩 & $3\,\mathrm{N\cdot m}$ & 连续输出扭矩 \\
-    峰值扭矩 & $7\,\mathrm{N\cdot m}$ & 短时输出扭矩 \\
-    额定转速 & $120\,\mathrm{r/min}$ & 减速后输出转速 \\
-    空载最大转速 & $200\,\mathrm{r/min}$ & 空载工况 \\
-    减速比 & $10:1$ & 内置减速机构 \\
-    电机质量 & 约 $300\,\mathrm{g}$ & 单个电机 \\
+    额定扭矩 & $3\,\mathrm{N\cdot m}$ & 连续输出扭矩 & 峰值扭矩 & $7\,\mathrm{N\cdot m}$ & 短时输出扭矩 \\
+    额定转速 & $120\,\mathrm{r/min}$ & 减速后输出转速 & 空载最大转速 & $200\,\mathrm{r/min}$ & 空载工况 \\
+    减速比 & $10:1$ & 内置减速机构 & 电机质量 & 约 $300\,\mathrm{g}$ & 单个电机 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 对于静态或准静态半蹲支撑工况，若按单腿支撑整机重量进行保守估算，有
-
 \begin{equation}
   T_{\text{rated}} =
   Mg L_{\text{link}} \sin 45^\circ
   \approx 5 \times 9.8 \times 0.15 \times 0.707
   \approx 5.2\,\mathrm{N\cdot m}
 \end{equation}
-
 双腿支撑时，单腿持续负载约减半，即约为 $2.6\,\mathrm{N\cdot m}$。所选电机额定扭矩为 $3\,\mathrm{N\cdot m}$，可覆盖该需求，并为姿态调节和小扰动恢复留出余量。
-
 \subsection{轮毂电机}
 
 轮毂电机按第 2.5 节的速度、加速和爬坡需求选型。本文选用额定扭矩为 $2.46\,\mathrm{N\cdot m}$ 的 M3508 减速轮毂电机，并将其直接布置在足端轮组内部。该方案省去额外传动链，轮系角度和速度也可直接用于估计前进位移与速度。
@@ -333,16 +292,13 @@
   \centering
   \caption{足端轮毂电机关键参数}
   \label{tab:wheel-motor-parameters}
-  \begin{tabular}{lcc}
+  \begin{tabular}{lcclcc}
     \toprule
-    参数 & 数值 & 说明 \\
+    参数 & 数值 & 说明 & 参数 & 数值 & 说明\\
     \midrule
-    额定扭矩 & $2.46\,\mathrm{N\cdot m}$ & 减速箱输出端 \\
-    堵转扭矩 & $3.69\,\mathrm{N\cdot m}$ & 短时极限输出 \\
-    额定转速 & $571\,\mathrm{r/min}$ & 减速后输出转速 \\
-    空载转速 & $587\,\mathrm{r/min}$ & 空载工况 \\
-    最大效率 & $70\%$ & 电机效率 \\
-    电机质量 & $336.4\,\mathrm{g}$ & 单个电机 \\
+    额定扭矩 & $2.46\,\mathrm{N\cdot m}$ & 减速箱输出端 & 堵转扭矩 & $3.69\,\mathrm{N\cdot m}$ & 短时极限输出 \\
+    额定转速 & $571\,\mathrm{r/min}$ & 减速后输出转速 &     空载转速 & $587\,\mathrm{r/min}$ & 空载工况 \\
+    最大效率 & $70\%$ & 电机效率 & 电机质量 & $336.4\,\mathrm{g}$ & 单个电机 \\
     \bottomrule
   \end{tabular}
 \end{table}
