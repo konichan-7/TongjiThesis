@@ -40,8 +40,8 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="link3" edge="1" parent="1" source="jointC" style="endArrow=none;html=1;strokeWidth=2;labelBackgroundColor=none;" value="$$l_2$$">
-          <mxGeometry height="50" relative="1" width="50" x="-1" y="-87" as="geometry">
-            <mxPoint x="75" y="47" as="offset" />
+          <mxGeometry height="50" relative="1" width="50" x="0.0081" y="25" as="geometry">
+            <mxPoint as="offset" />
             <mxPoint x="550" y="400" as="sourcePoint" />
             <mxPoint x="400" y="520" as="targetPoint" />
           </mxGeometry>
