@@ -15,6 +15,8 @@
   \item 任务空间控制层：基于 VMC 构造腿长支撑力，并结合 LQR 给出的腿摆控制量完成任务空间到关节空间的力矩映射。
 \end{enumerate}
 
+在该架构中，LQR、VMC 和滚转稳定环分别作用于不同的控制层级。LQR 根据线性化模型计算轮端力矩和腿摆方向控制量，用于维持俯仰平衡、速度响应和转向运动；VMC 根据腿长误差生成轴向支撑力，使腿部具有类似弹簧阻尼器的支撑和缓冲特性；滚转稳定环则在左右腿长参考值中加入差动修正，用于减小侧向姿态偏差。这样划分后，每个控制环节的输入、输出和物理含义都比较明确，后续仿真分析和样机调参也更容易定位问题。
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=1.0\textwidth]{figures/ch04/control_structure.png}
@@ -22,7 +24,6 @@
   \label{fig:control-structure}
 \end{figure}
 
-在该架构中，LQR、VMC 和滚转稳定环分别作用于不同的控制层级。LQR 根据线性化模型计算轮端力矩和腿摆方向控制量，用于维持俯仰平衡、速度响应和转向运动；VMC 根据腿长误差生成轴向支撑力，使腿部具有类似弹簧阻尼器的支撑和缓冲特性；滚转稳定环则在左右腿长参考值中加入差动修正，用于减小侧向姿态偏差。这样划分后，每个控制环节的输入、输出和物理含义都比较明确，后续仿真分析和样机调参也更容易定位问题。
 
 \subsection{与已有控制方案的对比}
 
@@ -216,14 +217,6 @@ $\boldsymbol{Q}$ 和 $\boldsymbol{R}$ 矩阵的选取直接影响 LQR 的闭环�
 
 LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不直接负责腿长调节、缓冲支撑和越障时的局部运动组织。
 考虑到闭环五连杆机构在关节空间中耦合较强，而虚拟腿长度和虚拟腿摆角具有更明确的物理含义，本文在腿部控制中仍采用任务空间描述：腿长方向由 VMC 构造轴向支撑力，腿摆方向直接沿用 LQR 输出的控制量。
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.6\textwidth]{figures/ch04/vmc.png}
-  \caption{VMC 虚拟控制示意图}
-  \label{fig:vmc-response}
-\end{figure}
-
 对于左、右腿，分别定义任务空间状态为
 \begin{equation}
   \boldsymbol{x}_{v,i} =
@@ -246,6 +239,13 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
   \label{eq:leg-force-law}
 \end{equation}
 其中，$m$ 为机器人的部分或整体等效质量，$\frac{1}{2} m g \cos\theta_{l,i}$ 为在此摆角下单腿分担的重力前馈项。\eqref{eq:leg-force-law} 使腿部在支撑阶段表现为具有等效刚度和阻尼的虚拟支撑单元，从而实现机体高度维持、落地缓冲和腿长振荡抑制。与直接进行关节位置控制相比，这种写法更符合机器人与地面发生力学作用时的控制需求，也更便于在不同工况下通过少量参数完成行为切换。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{figures/ch04/vmc.png}
+  \caption{VMC 虚拟控制示意图}
+  \label{fig:vmc-response}
+\end{figure}
 
 在腿摆方向，本文不再额外构造 PD 修正项，而是直接采用 LQR 主控制器输出的对应腿部控制量。记任务空间中的腿摆虚拟转矩为 $T_{\theta,i}^{\ast}$，则有
 \begin{equation}
@@ -499,7 +499,7 @@ MuJoCo 仿真模型主要包括机体刚体、左右腿部连杆、足端轮组�
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{figures/ch04/balance_response.png}
+  \includegraphics[width=0.8\textwidth]{figures/ch04/balance_response.png}
   \caption{原地平衡工况下的闭环响应。从上至下分别为机体俯仰角、左右腿角、水平速度}
   \label{fig:balance-response}
 \end{figure}
@@ -514,7 +514,7 @@ MuJoCo 仿真模型主要包括机体刚体、左右腿部连杆、足端轮组�
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{figures/ch04/velocity_tracking.png}
+  \includegraphics[width=0.8\textwidth]{figures/ch04/velocity_tracking.png}
   \caption{速度跟踪工况下的闭环响应。从上至下分别为前进速度、机体俯仰角、轮端力矩}
   \label{fig:velocity-tracking}
 \end{figure}
