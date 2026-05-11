@@ -232,13 +232,13 @@ LQR 主控制器能够有效处理前进方向上的全局平衡，但它并不�
 
 由第三章给出的虚拟腿雅可比矩阵 $\boldsymbol{J}_{v,i}$ 和虚功原理，任务空间控制量到实际关节空间的映射可写为
 \begin{equation}
-  \boldsymbol{\tau}_{i}^{\ast}
+  \boldsymbol{\tau}_{i}
   =
   \boldsymbol{J}_{v,i}^{\mathsf{T}}\boldsymbol{F}_{v,i}^{\ast}
   \qquad i \in \{l,r\}
   \label{eq:leg-joint-torque}
 \end{equation}
-其中，$\boldsymbol{\tau}_{i}^{\ast}$ 为第 $i$ 条腿对应主动关节的驱动力矩向量。\eqref{eq:leg-joint-torque} 将“任务空间中的腿长支撑力与 LQR 腿摆控制量”转换为“关节空间中的可执行力矩命令”，使闭环五连杆机构仍可在虚拟腿描述下进行直观控制。因此，本文并不在第四章重复推导闭环机构运动学细节，而是直接调用第三章建立的映射关系，以减少章节间重复。
+其中，$\boldsymbol{\tau}_{i}$ 为第 $i$ 条腿对应主动关节的驱动力矩向量。\eqref{eq:leg-joint-torque} 将“任务空间中的腿长支撑力与 LQR 腿摆控制量”转换为“关节空间中的可执行力矩命令”，使闭环五连杆机构仍可在虚拟腿描述下进行直观控制。
 
 \section{机体滚转角补偿}
 
@@ -448,7 +448,7 @@ MuJoCo 仿真模型主要包括机体刚体、左右腿部连杆、足端轮组�
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{figures/ch04/mujoco_robot.png}
+  \includegraphics[width=0.95\textwidth]{figures/ch04/mujoco_robot.jpg}
   \caption{MuJoCo 双轮足机器人仿真模型}
   \label{fig:mujoco-model}
 \end{figure}
@@ -493,14 +493,14 @@ MuJoCo 仿真模型主要包括机体刚体、左右腿部连杆、足端轮组�
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}[t]{0.38\textwidth}
+  \begin{subfigure}[t]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/ch04/vertical_impulse.jpg}
     \caption{竖直脉冲扰动}
     \label{fig:vertical-impulse-scene}
   \end{subfigure}
   \hspace{0.08\textwidth}
-  \begin{subfigure}[t]{0.38\textwidth}
+  \begin{subfigure}[t]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/ch04/horizon_impulse.jpg}
     \caption{水平脉冲扰动}
