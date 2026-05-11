@@ -46,23 +46,21 @@
 为控制模型复杂度，并使模型与后续分层控制器的职责划分一致，本文作如下假设：
 \begin{enumerate}
   \item 将机器人简化为机体、左腿、右腿、左驱动轮和右驱动轮五部分组成的刚体系统，忽略连杆柔性变形、轴承间隙和摩擦损失对主要动力学行为的影响；
-  \item 忽略腿部与机体位形变化对驱动轮轴向转动惯量的影响，轮组惯量在建模和控制器设计中取为常值；
-  \item 驱动轮与地面满足纯滚动约束，不考虑轮胎侧偏、纵向打滑和接触点弹性变形，后续实验中再结合离地和打滑检测对该假设进行修正；
+  \item 忽略腿部与机体位形变化对驱动轮轴向转动惯量的影响，惯量取为常值；
+  \item 驱动轮与地面满足纯滚动约束，不考虑轮胎侧偏、纵向打滑；
   \item 机体滚转角由腿部控制器单独补偿，在整机主动力学分析中取滚转角及其一、二阶导数为零，即 $\gamma=\dot{\gamma}=\ddot{\gamma}=0$；
   \item 腿部支撑力由腿部控制器调节，在整机主动力学分析中假设左右腿支撑力保持相等，忽略侧向惯性力矩对运动模型的影响。
 \end{enumerate}
 
 
 机器人简化刚体模型及坐标系如\figref{fig:model-coordinate} 所示。取地面惯性坐标系 $\Sigma_I = \{O_I, s, h\}$，其中 $s$ 轴沿机器人前进方向，$h$ 轴竖直向上。轮轴中心记为点 $W$，髋关节记为点 $H$，机体质心记为点 $B$。等效虚拟腿长度记为 $l$，平均虚拟腿摆角记为 $\theta_l$，机体俯仰角记为 $\theta_b$，轮半径记为 $R_w$，轮轴中心水平位移记为 $s$。系统偏航角记为 $\phi$，仅在后续状态空间变量构造中使用。
-
+本章主要符号列于\tabref{tab:model-symbols}。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.68\textwidth]{figures/ch03/robot.png}
   \caption{机器人简化刚体模型及坐标系定义}
   \label{fig:model-coordinate}
 \end{figure}
-
-本章主要符号列于\tabref{tab:model-symbols}。
 
 \begin{table}[H]
   \centering
