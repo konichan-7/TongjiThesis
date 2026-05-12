@@ -7,7 +7,7 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/ch05/demo.png}
+  \includegraphics[width=0.9\textwidth]{figures/ch05/demo.png}
   \caption{物理样机实物图}
 \end{figure}
 
@@ -43,17 +43,13 @@
   \end{tabular}
 \end{table}
 
-实物实验的控制结构与仿真一致：LQR 出轮端力矩和腿摆量，VMC 出腿长支撑力，滚转环出左右腿长差修正。不同的是，实物上多了执行器带宽、轮地接触状态和传感器噪声这些仿真里吃不透的因素。所以仿真参数只能当起点，实物上还得根据实际响应再调——有的增益要收，有的限幅要放，有的方向需要反复试。
-
-调试的基本顺序是：先离线算好 LQR 增益，把轮端限幅压到较低水平，在保护架里做小幅站立；等机器人能从不大的初始偏斜里自己回来，再逐步放开轮端力矩限幅和姿态增益。主平衡站稳后，调 VMC 的刚度 $K_l$ 和阻尼 $D_l$，原则是腿撑得住、不振荡。滚转环最后接入，腿长差修正量设一个较小的上限，避免滚转角测量噪声引起左右腿高频哆嗦。
-
 所有实验均在平整地面上完成。每组工况重复测试多次，离线分析时剔除通信中断、保护架碰撞、轮端离地等异常片段。本文主要从以下指标观察实验结果：
 
 \begin{enumerate}
   \item 原地平衡实验：观察机体俯仰角和腿摆角是否收敛，前进速度是否快速收敛，以及轮端力矩是否出现长期饱和；
   \item 速度跟踪实验：观察实际速度相对参考速度的响应滞后、稳态误差和超调情况，同时检查速度变化过程中机体姿态是否保持稳定；
-  \item 滚转稳定实验：观察滚转角峰值、恢复过程和左右腿长参考差异，分析滚转稳定对侧向姿态的改善作用；
   \item 腿长控制实验：观察左右实际腿长对参考腿长的跟踪能力、两侧响应一致性以及高度变化对整机平衡的影响。
+  \item 滚转稳定实验：观察滚转角峰值、恢复过程和左右腿长参考差异，分析滚转稳定对侧向姿态的改善作用；
 \end{enumerate}
 
 \section{原地平衡性能验证}
@@ -62,14 +58,14 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1.0\textwidth]{figures/ch05/standup.png}
+  \includegraphics[width=0.8\textwidth]{figures/ch05/standup.png}
   \caption{原地平衡实验响应曲线}
   \label{fig:balance-experiment-response}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{figures/ch05/standup.jpg}
+  \includegraphics[width=0.5\textwidth]{figures/ch05/standup.jpg}
   \caption{原地起立并平衡过程。从上至下分别为：初始态，过渡态，平衡态}
   \label{fig:balance-experiment-scene}
 \end{figure}
@@ -85,7 +81,7 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/ch05/ds.png}
+  \includegraphics[width=0.8\textwidth]{figures/ch05/ds.png}
   \caption{速度跟踪实验响应曲线}
   \label{fig:velocity-experiment-response}
 \end{figure}
@@ -133,21 +129,21 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/ch05/roll_compensation.png}
+  \includegraphics[width=0.65\textwidth]{figures/ch05/roll_compensation.png}
   \caption{滚转稳定前后实验响应对比}
   \label{fig:roll-experiment-response}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{figures/ch05/roll.jpg}
+  \caption{滚转稳定机器人位姿表现}
+  \label{fig:roll-experiment-scene}
 \end{figure}
 
 滚转稳定实验结果如\figref{fig:roll-experiment-response} 所示。实验过程中，机体滚转角在扰动作用下出现明显偏移，随后逐渐回到零点附近。与此同时，左右腿长参考值不再保持完全相同，而是根据滚转角变化形成相反方向的修正量。该现象说明滚转稳定环节已经参与腿长通道控制，并能够通过改变左右腿支撑高度对机体侧倾进行修正。
 
 实验结果表明，基于腿长差修正的滚转稳定能够在不改变主控制框架的前提下改善样机侧向姿态。该方法适合用于平地低速运动和轻微侧向扰动场景，但对于高速转向、强侧向冲击或复杂三维地形，仍需结合更完整的侧向动力学模型和接触力分配策略进一步优化。
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.6\textwidth]{figures/ch05/roll.jpg}
-  \caption{滚转稳定机器人位姿表现}
-  \label{fig:roll-experiment-scene}
-\end{figure}
 
 \section{本章小结}
 
