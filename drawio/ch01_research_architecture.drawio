@@ -1,13 +1,13 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X) draw.io">
   <diagram name="论文研究内容与技术路线" id="ch01-research-architecture">
-    <mxGraphModel dx="1483" dy="1112" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1220" pageHeight="1180" math="1" shadow="0">
+    <mxGraphModel dx="584" dy="438" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1220" pageHeight="1180" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="main_scope" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#2F3437;strokeWidth=3;dashed=1;dashPattern=10 8;" value="" vertex="1">
-          <mxGeometry height="815" width="1130" x="55" y="150" as="geometry" />
+          <mxGeometry height="815" width="1130" x="53" y="150" as="geometry" />
         </mxCell>
-        <mxCell id="backbone" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#5F6972;strokeWidth=2;" value="">
+        <mxCell id="backbone" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;strokeColor=#5F6972;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endFill=1;" target="ch2" value="">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="232" y="125" as="sourcePoint" />
             <mxPoint x="232" y="990" as="targetPoint" />
@@ -162,6 +162,57 @@
         </mxCell>
         <mxCell id="stage_note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=SimSun;fontSize=16;fontStyle=1;fontColor=#2F3437;" value="本文主体工作" vertex="1">
           <mxGeometry height="28" width="130" x="78" y="138" as="geometry" />
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-1" edge="1" parent="1" source="ch2" style="endArrow=blockThin;html=1;rounded=0;strokeColor=#5F6972;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="ch3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="360" as="sourcePoint" />
+            <mxPoint x="281" y="453" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=SimSun;fontSize=16;fontStyle=1;fontColor=#3F4A52;" value="参数支撑" vertex="1">
+          <mxGeometry height="32" width="195" x="177" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-3" edge="1" parent="1" source="ch3" style="endArrow=blockThin;html=1;rounded=0;strokeColor=#5F6972;strokeWidth=2;endFill=1;exitX=0.606;exitY=0.997;exitDx=0;exitDy=0;exitPerimeter=0;startSize=6;endSize=6;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="560" as="sourcePoint" />
+            <mxPoint x="262" y="630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-4" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=SimSun;fontSize=16;fontStyle=1;fontColor=#3F4A52;" value="理论基础" vertex="1">
+          <mxGeometry height="32" width="195" x="210" y="558" as="geometry" />
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-5" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#5F6972;strokeWidth=2;endFill=0;startArrow=blockThin;startFill=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="212" y="524" as="sourcePoint" />
+            <mxPoint x="212" y="632" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-6" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=SimSun;fontSize=16;fontStyle=1;fontColor=#3F4A52;" value="实践应用" vertex="1">
+          <mxGeometry height="32" width="195" x="70" y="558" as="geometry" />
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-7" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;strokeColor=#5F6972;strokeWidth=2;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;startSize=6;endSize=6;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="265" y="740" as="sourcePoint" />
+            <mxPoint x="265" y="835" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-8" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=SimSun;fontSize=16;fontStyle=1;fontColor=#3F4A52;" value="指导" vertex="1">
+          <mxGeometry height="32" width="195" x="200" y="771" as="geometry" />
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-9" edge="1" parent="1" source="ch5" style="endArrow=blockThin;html=1;rounded=0;strokeColor=#5F6972;strokeWidth=2;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;startSize=6;endSize=6;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ch6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="950" as="sourcePoint" />
+            <mxPoint x="280" y="1045" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-10" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#5F6972;strokeWidth=2;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;startSize=6;endSize=6;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=blockThin;startFill=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="739.5" as="sourcePoint" />
+            <mxPoint x="210" y="834.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FAbiSAMGl6HbUXR8qt5G-11" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=SimSun;fontSize=16;fontStyle=1;fontColor=#3F4A52;" value="检验" vertex="1">
+          <mxGeometry height="32" width="195" x="80" y="771" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
