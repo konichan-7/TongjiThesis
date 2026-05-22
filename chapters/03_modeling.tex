@@ -529,9 +529,10 @@ $}
   \centering
   \includegraphics[width=0.5\textwidth]{figures/ch03/5linkage.png}
   \caption{同轴五连杆机构简图}
+  \label{fig:equivalent-fivebar}
 \end{figure}
 
-以两台腿部驱动电机的等效同轴安装点 $A(E)$ 为原点建立平面坐标系，令主动关节角分别为 $\varphi_1$ 和 $\varphi_4$，末端轮轴中心记为点 $C$。从右侧主支链出发，末端位置可写为
+以\figref{fig:equivalent-fivebar} 中两台腿部驱动电机的等效同轴安装点 $A(E)$ 为原点建立平面坐标系，令主动关节角分别为 $\varphi_1$ 和 $\varphi_4$，末端轮轴中心记为点 $C$。从右侧主支链出发，末端位置可写为
 \begin{equation}
   \boldsymbol{r}_C
   =
@@ -774,13 +775,14 @@ $}
   \end{bmatrix}
   \label{eq:vmc-torque-map}
 \end{equation}
-\eqref{eq:vmc-torque-map} 表明，腿长支撑力和腿摆虚拟转矩可以通过虚拟腿雅可比矩阵转置直接转换为两个主动关节的电机力矩。
+\eqref{eq:vmc-torque-map} 表明，腿长支撑力和腿摆虚拟转矩可以通过虚拟腿雅可比矩阵转置直接转换为两个主动关节的电机力矩，受力映射关系如\figref{fig:vmc-force-map} 所示。
 由于前文已经证明缩放五连杆与标准五连杆具有相同的末端位置函数和雅可比矩阵，该映射同样适用于实际物理腿部机构。
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.4\textwidth]{figures/ch03/vmc_dyn.png}
   \caption{VMC 受力映射简图}
+  \label{fig:vmc-force-map}
 \end{figure}
 
 若控制器先将虚拟腿力转换到末端直角坐标系，也可写成等价形式。由 $p_s=l\sin\theta_l$、$p_h=l\cos\theta_l$ 可知，沿腿长方向的单位向量为 $[\sin\theta_l,\ \cos\theta_l]^\mathsf{T}$，沿腿摆角正方向的单位切向量为 $[\cos\theta_l,\ -\sin\theta_l]^\mathsf{T}$。因此，末端直角坐标系中的等效力为
